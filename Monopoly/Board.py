@@ -62,9 +62,9 @@ class Dice:
 
     def roll(self, screen):
         font = pg.font.Font(None, 32)
-        button = Button(text = "Roll Dice", position = (1200, 400))
+        button = Button(text = "Хвърли заровете", position = (1200, 400))
         while True:
-            display_message(screen, font, 500, 40, "ACTION: ROLL THE DICES")
+            display_message(screen, font, 500, 40, "ДЕЙСТВИЕ: ХВЪРЛИ ЗАРОВЕТЕ")
             button.draw(screen)
             self.vis_dices(screen)
             pg.display.flip()

@@ -86,12 +86,12 @@ def visualise(screen, game):
     font = pg.font.Font(None, 32)
     for p in game.get_players():
         p.draw(screen)
-    display_message(screen, font,1200, 20, f"Playing: {game.get_player().get_name()}")
-    display_message(screen, font,1200, 40, f"Money: {game.get_player().get_money()}")
-    display_message(screen, font,1200, 60, f"Life: {game.get_player().get_life()}")
-    game.get_player().display_image(screen, (1100, 80))
+    display_message(screen, font,1200, 20, f"Играч: {game.get_player().get_name()}")
+    display_message(screen, font,1200, 40, f"Джобни: {game.get_player().get_money()}")
+    display_message(screen, font,1200, 60, f"Живот: {game.get_player().get_life()}")
+    game.get_player().display_image(screen, (1110, 80))
     properties = game.get_player().get_properties()
-    display_message(screen, font, 1200, 80, f"Properties: ")
+    display_message(screen, font, 1200, 80, f"Собствености: ")
     y = 100
     for p in properties:
         display_message(screen, font, 1220, y, p.get_name())

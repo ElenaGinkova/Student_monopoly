@@ -6,7 +6,7 @@ import sys
 FIELD_COUNT = 34
 GO_MONEY = 200
 SPRITE_SCALE = (80, 130) # Resize all sprites to 100x100
-HIGTH = 130
+HIGTH = 100
 SCREEN_COLOR = (30, 30, 30)
 BACKGROUND = pg.image.load('Monopoly/assets/BoardUNI.png')
 BACKGROUND = pg.transform.smoothscale(BACKGROUND, (1100, 600) )
@@ -65,6 +65,10 @@ class Player():
         return self.pos_indx
     
     def draw(self, screen):
+        rect = self.image.get_rect()
+        rect.topleft = self.position
+        back_rect = rect.inflate(0, 0)
+        pg.draw.rect(screen, (200, 200, 200), back_rect, border_radius = 20)
         self.rect.topleft = self.position
         screen.blit(self.image, self.rect)
     
@@ -77,7 +81,7 @@ class Player():
     def display_image(self, screen, position):
         image = pg.image.load(self.image_p)
         w = self.width
-        image = pg.transform.scale(image, (w, HIGTH))
+        image = pg.transform.scale(image, (w, HIGTH + 20))
         rect = image.get_rect()
         rect.topleft = position
         back_rect = rect.inflate(10, 10)  # Increase width and height
@@ -95,20 +99,20 @@ class Player():
         if self.money >= property.get_price():
             self.money -= property.get_price()
             self.properties.append(property)
-            message = f"Succesfully bought {property.get_name()}"
+            message = f"Успешно закупихте {property.get_name()}"
             display_message(screen, game.font, 500, 40, message)
             return True
-        buttons = [["Raise money", (300, 300), (100, 50)], ["Dont buy", (450, 300), (200, 50)]]
-        message = "Do you want to raise money to buy?"
+        buttons = [["Съберете пари", (300, 300), (100, 50)], ["Не купувайте", (450, 300), (200, 50)]]
+        message = "Искате ли да съберете пари?"
         visualise(screen, game)
         dec = decision_menu(screen, message, buttons, game)
-        if dec == "Raise money":
+        if dec == "Съберете пари":
             raised = self.try_to_raise_money(property.get_price(), screen, game)
             if raised >= property.get_price():
                 return self.buy_property(property, screen, game)
             else:
                 return False
-        elif dec == "Dont buy":
+        elif dec == "Не купувайте":
             return False
         return False  # Default return if no valid action is taken
 
@@ -118,7 +122,7 @@ class Player():
     #to to 
     def declare_bankruptcy(self, screen, game, creditor=None):
         if creditor:
-            message = f"{self.name} gives everything to {creditor.get_name()}!"
+            message = f"{self.name} дава всичко на {creditor.get_name()}!"
             display_message(screen, game.font, 500, 40, message)
             pg.display.update()
             pg.time.wait(2000)
@@ -127,7 +131,7 @@ class Player():
                 creditor.gain_property(property)
             creditor.money += self.money  # Transfer remaining money
         else:
-            message = f"{self.name} is bankrupt and out of the game! All assets return to the bank."
+            message = f"{self.name} банкрутира и е вън от играта! Всичко се връща на банката."
             display_message(screen, game.font, 500, 40, message)
             pg.display.update()
             pg.time.wait(2000)
@@ -155,7 +159,7 @@ class Player():
         if self.has_what_to_mortage():
             visualise(screen, game)
             pg.draw.rect(screen, GREEN_COLOR, (150, 250, 800, 300))
-            message = f"What do you want to mortage?"
+            message = f"Какво искате да ипотекирате?"
             mortagable = [prop for prop in self.properties if prop.can_it_be_mortaged()]
             names_map = {}
             buttons = []
@@ -168,16 +172,16 @@ class Player():
                 buttons.append([prop.get_name(), (x, y), (100, 50)])
                 names_map[prop.name] = prop
                 x += 100
-            buttons.append(["Cancel", (700, 400), (100, 50)])
+            buttons.append(["Отказ", (700, 400), (100, 50)])
             decision = decision_menu(screen, message, buttons, game)
-            if decision == "Cancel":
+            if decision == "Отказ":
                 return False
             to_mortage = names_map[decision]
             money = to_mortage.get_mortage_money()
-            display_message(screen, game.font, 500, 40, f"Raised {money}!")
+            display_message(screen, game.font, 500, 40, f"Събрахте {money}!")
             self.money += money
         else:
-            message = f"There is nothing to mortage!"
+            message = f"Нямате какво да ипотекирате!"
             display_message(screen, game.font, 500, 40, message)
         pg.display.update()
         pg.time.wait(2000) # 2 sec
@@ -189,7 +193,7 @@ class Player():
         if self.has_houses():
             visualise(screen, game)
             pg.draw.rect(screen, GREEN_COLOR, (150, 250, 800, 300))
-            message = f"Which house do you want to sell?"
+            message = f"Коя къща желаете да продадете?"
             with_houses = [prop for prop in self.properties if prop.has_houses()]
             names_map = {}
             buttons = []
@@ -202,16 +206,16 @@ class Player():
                 buttons.append([prop.get_name(), (x, y), (100, 50)])
                 names_map[prop.name] = prop
                 x += 100
-            buttons.append("Cancel", (700, 400), (100, 50))
+            buttons.append("Отказ", (700, 400), (100, 50))
             decision = decision_menu(screen, message, buttons, game)
-            if decision == "Cancel":
+            if decision == "Отказ":
                 return False
             house_to_sell = names_map(decision)
             money = house_to_sell.get_house_money()
-            display_message(screen, game.font, 500, 40, f"Raised {money}!")
+            display_message(screen, game.font, 500, 40, f"Събрахте {money}!")
             self.money += money
         else:
-            message = f"You dont have houses!"
+            message = f"Нямате налични къщи!"
             display_message(screen, game.font, 500, 40, message)
         pg.time.wait(2000) # 2 sec
         return money
@@ -219,15 +223,15 @@ class Player():
     def try_to_raise_money(self, amount, screen, game):
         raised = 0
         while self.money < amount:
-            message = f"{self.name}, how do you want to raise money?"
-            decision = decision_menu(screen, message, [["Mortgage Property", (300, 300),(100, 50)], ["Sell House",(450, 300), (100, 50)], ["Cancel",(600, 300), (100, 50)]], game)
+            message = f"{self.name}, как искате да съберете пари?"
+            decision = decision_menu(screen, message, [["Ипотекиране на собственост", (300, 300),(100, 50)], ["Продаване на къща",(450, 300), (100, 50)], ["Отказ",(600, 300), (100, 50)]], game)
             #("Trade with Player", (600, 590), (200, 50)) -> to add
             #sell hotel
-            if decision == "Cancel":
+            if decision == "Отказ":
                 break
-            elif decision == "Mortgage Property":
+            elif decision == "Ипотекиране на собственост":
                 raised += self.handle_mortage(screen, game)
-            elif decision == "Sell House":
+            elif decision == "Продаване на къща":
                 raised += self.handle_mortage(screen, game)
            # elif decision == "Declare Bankruptcy":#or when we catn pay???? in the prev func
              #   pass#bankrupcy = true
@@ -241,23 +245,23 @@ class Player():
             return True
         raised = self.try_to_raise_money(amount, screen, game)
         visualise(screen, game)
-        message = f"Raised {raised} from {amount} needed"
+        message = f"Събрани {raised} от {amount} нужни"
         display_message(screen, game.font, 500, 40, message)
         while raised < amount:
             visualise(screen, game)
-            message = f"Raised {raised} from {amount} needed"
-            buttons = [["Raise more", (300, 300),(100, 50)],  ["Bankrupt",(400, 300), (100, 50)]]
+            message = f"Събрани {raised} от {amount} нужни"
+            buttons = [["Съберете още", (300, 300),(100, 50)],  ["Банкрутирайте",(400, 300), (100, 50)]]
             dec = decision_menu(screen, message, buttons, game)
-            if dec == "Raise more":
+            if dec == "Съберете още":
                 raised += self.try_to_raise_money(amount, screen, game)
-            elif dec == "Bankrupt":
+            elif dec == "Банкрутирайте":
                 self.declare_bankruptcy(screen, game, creditor)
                 return False
         #success
         self.money -= amount
         if creditor:
             creditor.recieve_money(screen, game, amount)
-        message = f"Congrats! Raised {raised} from {amount} needed"
+        message = f"Честито! Събрахте {raised} от {amount} нужни"
         display_message(screen, game.font, 500, 40, message)
         pg.display.update()
         pg.time.wait(2000)
@@ -271,17 +275,17 @@ class Player():
         raised = self.try_to_raise_money(amount, screen, game)
 
         visualise(screen, game)
-        message = f"Raised {raised} from {amount} needed"
+        message = f"Събрани {raised} от {amount} нужни"
         display_message(screen, game.font, 500, 40, message)
 
         while raised < amount:
             visualise(screen, game)
-            message = f"Raised {raised} from {amount} needed"
-            buttons = [["Raise more", (300, 300),(100, 50)],  ["Quit",(400, 300), (100, 50)]]
+            message = f"Събрани {raised} от {amount} нужни"
+            buttons = [["Съберете още", (300, 300),(100, 50)],  ["Отказ",(400, 300), (100, 50)]]
             dec = decision_menu(screen, message, buttons, game)
-            if dec == "Raise more":
+            if dec == "Съберете още":
                 raised += self.try_to_raise_money(amount, screen, game)
-            elif dec == "Quit":
+            elif dec == "Отказ":
                 return False
         return True
     

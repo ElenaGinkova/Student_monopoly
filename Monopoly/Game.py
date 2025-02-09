@@ -116,8 +116,8 @@ class Game:
             self.screen.fill(SCREEN_COLOR)
             self.vis_input_boxes()
             if messege:
-                display_message(self.screen, self.font, 700, 300, "Please fill up your names!")
-            self.vis_button("Submit", 400, 500)
+                display_message(self.screen, self.font, 700, 300, "Моля попълнете всички имена!")
+            self.vis_button("Предай", 400, 500)
             pg.display.update()
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -153,13 +153,13 @@ class Game:
         valid = True
         while True:
             self.screen.fill(SCREEN_COLOR)
-            display_message(self.screen, self.font, 60,50,"Enter player count[2-10]: ")
+            display_message(self.screen, self.font, 60,50,"Въведете бройка играчи[2-10]: ")
             
             if not valid:
-                display_message(self.screen, self.font,400, 50,"Incorrect input!")
+                display_message(self.screen, self.font,400, 50,"Грешен вход!")
 
             self.vis_input_boxes()
-            self.vis_button("Next", 300, 300)
+            self.vis_button("Нататък", 300, 300)
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     pg.quit()
@@ -213,10 +213,10 @@ class Game:
 
         while True:
             self.screen.fill(SCREEN_COLOR)
-            instructions = self.font.render("Select characters: {} remaining".format(self.pl_count - len(selected)), True, (255, 255, 255))
+            instructions = self.font.render("Изберете герои: {} оставащи".format(self.pl_count - len(selected)), True, (255, 255, 255))
             self.screen.blit(instructions, (50, 10))
             self.visualise_selected_characters(images, positions, selected)
-            self.vis_button("Play!", 900, 600)
+            self.vis_button("Играй!", 900, 600)
             pg.display.flip()
 
             for event in pg.event.get():
@@ -237,7 +237,7 @@ class Game:
         display_message(self.screen, self.font,1200, 100, f"Playing: {self.player.get_name()}")
         display_message(self.screen, self.font,1200, 130, f"Money: {self.player.get_money()}")
         display_message(self.screen, self.font,1200, 160, f"Life: {self.player.get_life()}")
-        self.player.display_image(self.screen, (1200, 200))
+        self.player.display_image(self.screen, (1110, 200))
 
     def populate_buttons(self):
         #self.buttons.append(Button(text = "Roll Dice", position = (1200, 400)))
@@ -263,17 +263,6 @@ class Game:
             if button.is_clicked(event):
                 self.execute_action(button.text)
 
-    # def vis_dices(self):
-    #     self.dice1_im = pg.image.load(DICE_PATHS[self.dice1 - 1])
-    #     self.dice2_im  = pg.image.load(DICE_PATHS[self.dice2 - 1])
-    #     self.dice1_im = pg.transform.scale(self.dice1_im, (70, 70))
-    #     self.dice2_im = pg.transform.scale(self.dice2_im, (70, 70))
-
-    # def roll(self):
-    #     self.dice1 = random.randint(1,6)
-    #     self.dice2 = random.randint(1,6)
-    #     self.vis_dices()
-
     #add mortage/unmortage button as option 
     def take_turn(self, indx):
         self.dice = Dice()
@@ -286,7 +275,7 @@ class Game:
             visualise(self.screen, self)
             self.dice.vis_dices(self.screen)
             pg.display.flip()
-            # 1) ROLL -> add rolling button
+            # 1) ROLL -> add rolling button or mortage/unmortage/trade buttons and decision while roll then continue
             dice1, dice2 = self.dice.roll(self.screen)
             total = dice1 + dice2
             if in_jail:
@@ -302,9 +291,9 @@ class Game:
             # 5) CHECK FOR DOUBLES
             if dice1 == dice2:
                 rolling_doubles += 1
-                display_message(self.screen, self.font,500,50,"Rolled doubles!")
+                display_message(self.screen, self.font,500,50,"Хвърлихте чифт!")
                 if rolling_doubles == 3:
-                    display_message(self.screen, self.font,500,50,"Three times! Going to jail!")
+                    display_message(self.screen, self.font,500,50,"Три пъти! Жълта книжка!")
                     self.board.go_to_jail(self.player, self.screen)
                     return  # End turn after going to jail
                 else:
