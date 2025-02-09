@@ -50,7 +50,7 @@ class Property(Field):
         return self.house_price // 2 # 50%
     
     def can_it_be_mortaged(self):
-        return not self.mortage and not self.has_hotel() and not self.has_houses()
+        return not self.mortaged and not self.has_hotel() and not self.has_houses()
     
     def is_mortage(self):
         return self.mortage
@@ -110,7 +110,6 @@ class Property(Field):
     def __repr__(self):
         return f"{self.name} ({self.field_type}) at {self.position} - Rent: ${self.rent}"
     
-
     #to implement
     def auction(self, screen, game):
         visualise(screen, game)
@@ -171,7 +170,6 @@ class Property(Field):
             pg.display.update()
             pg.time.wait(4000)
                 
-
     def action(self, screen, game):
         if not self.owner:
             '''option 1'''

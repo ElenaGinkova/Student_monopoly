@@ -126,6 +126,7 @@ class Player():
         game.remove_player(self)
         # If the player has nothing to sell, they go bankrupt
         return False  # No possible way to raise money
+    
     def has_what_to_mortage(self):
         for pr in self.properties:
             if pr.can_it_be_mortaged():
@@ -157,17 +158,18 @@ class Player():
                 buttons.append([prop.get_name(), (x, y), (100, 50)])
                 names_map[prop.name] = prop
                 x += 100
-            buttons.append("Cancel", (700, 400), (100, 50))
+            buttons.append(["Cancel", (700, 400), (100, 50)])
             decision = decision_menu(screen, message, buttons, game)
             if decision == "Cancel":
                 return False
-            to_mortage = names_map(decision)
+            to_mortage = names_map[decision]
             money = to_mortage.get_mortage_money()
             display_message(screen, game.font, 500, 40, f"Raised {money}!")
             self.money += money
         else:
             message = f"There is nothing to mortage!"
             display_message(screen, game.font, 500, 40, message)
+        pg.display.update()
         pg.time.wait(2000) # 2 sec
         return money
 
