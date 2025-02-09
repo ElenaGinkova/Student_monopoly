@@ -61,6 +61,9 @@ class Player():
     def is_in_jail(self):
         return self.jail
     
+    def go_to_jail(self):
+        self.jail = True
+        
     def get_pos_indx(self):
         return self.pos_indx
     

@@ -8,7 +8,7 @@ from Characters.Roommate import Roommate
 from Characters.TicketChecker import TicketChecker
 from Characters.NightLife import NightLife
 from collections import OrderedDict
-from Button import Button, display_message, visualise
+from Button import Button, display_message, visualise, decision_menu
 from Board import Dice, Board
 import random
 
@@ -19,6 +19,7 @@ FPS = 60
 COLOR_INACTIVE = pg.Color("lightskyblue")
 COLOR_ACTIVE = pg.Color("dodgerblue")
 clock = pg.time.Clock()
+JAIL_INDX = 1000, 200
 
 #do not put everything in self and in the class...
 #maybe gameprep class and other for gameplay
@@ -327,3 +328,8 @@ class Game:
     def handle_jail(self, player, dice1, dice2, screen):
         pass
 
+
+# move(self, field, screen, game):
+    def go_to_jail(self):
+        decision_menu(self.screen, "Връчена ви е жълта книжка!", [["Добре", (300, 370), (150, 50)]], self) 
+        self.board.go_to_jail(self.player, self.screen, self)

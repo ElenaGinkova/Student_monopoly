@@ -30,8 +30,6 @@ class Board:
     
     #Animation for movement
     def move(self, player, steps, screen, game, indx = 0):
-        #if indx:
-        #    player.move(self.fields[indx], screen, game)
         old_pos_indx = player.get_pos_indx()
         new_pos_indx = (old_pos_indx + steps) % FIELD_COUNT
         player.move(self.fields[new_pos_indx], screen, game)
@@ -43,7 +41,7 @@ class Board:
     
     def go_to_jail(self, player, screen, game):
         self.move(player, 0, screen, JAIL_INDX)
-        self.fields[JAIL_INDX].action(player, screen, game)
+        player.go_to_jail()
 
         
 #чифтове също трябва да се отчитат        
