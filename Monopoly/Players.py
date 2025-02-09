@@ -265,7 +265,6 @@ class FMIStudent(Player):
 
 
 #    def update(self):
-#        '''moves'''
 #        key = pygame.key.get_pressed()
 #        last = self.rect.copy()
 #        if key[pygame.K_LEFT]:
