@@ -68,7 +68,6 @@ class Property(Field):
     def unmortage(self):
         self.mortage = False
 #
-    @property
     def rent(self, screen, game):
         if self.mortaged:
             display_message(screen, game.font, 300, 100, "This property is mortaged! Free for you to stay!")
@@ -82,23 +81,54 @@ class Property(Field):
             return base_rent * (20 ** self.hotel)  # increase 20x
         return base_rent
     
+    def change_owner(self, owner):
+        self.owner = owner
+
     @property
     def house_price(self):
         return self.price // 2  # House price 50% of value
+    
+    @property
+    def hotel_price(self):
+        return self.house_price * 5
 
-    def build_house(self, screen, game):
-        if self.mortaged:
-            display_message(screen, game.font, 300, 100, "This property is mortaged!")
-            return
+    def handle_build_house(self, screen, game):
         if self.houses < 4 and not self.hotel:
-            self.houses += 1
-            print(f"Built a house on {self.name}. New rent: ${self.rent}")
+            mess = "Do you want to build a house?"
+            dec = decision_menu(screen, mess, [["Yes", (300, 370), (150, 50)], ["No", (500, 370), (150, 50)]], game)
+            if dec == "Yes":
+                paid = game.get_player().pay_amount(self.house_price, screen, game)
+                if paid:
+                    self.houses += 1
+                    mess = f"Built a house on {self.name}. New rent: ${self.rent}"
+                    display_message(screen, game.font, 500, 40, mess)
+                else:
+                    mess = f"Couldnt built house!"
+                    display_message(screen, game.font, 500, 40, mess)
+            else:
+                mess = f"Didnt want to built a house!"
+                display_message(screen, game.font, 500, 40, mess)
         elif self.houses == 4 and not self.hotel:
-            self.hotel = True
-            self.houses = 0
-            print(f"Built a hotel on {self.name}. New rent: ${self.rent}")
+            mess = "Do you want to build a hotel?"
+            dec = decision_menu(screen, mess, [["Yes", (300, 370), (150, 50)], ["No", (500, 370), (150, 50)]], game)
+            if dec == "Yes":
+                paid = game.get_player().pay_amount(self.hotel_price, screen, game)
+                if paid:
+                    self.hotel = True
+                    self.houses = 0
+                    mess = f"Built a hotel on {self.name}. New rent: ${self.rent}"
+                    display_message(screen, game.font, 500, 40, mess)
+                else:
+                    mess = f"Couldnt built a hotel!"
+                    display_message(screen, game.font, 500, 40, mess)
+            else:
+                mess = f"Didnt want to built a hotel!"
+                display_message(screen, game.font, 500, 40, mess)
         else:
-            print(f"Cannot build more on {self.name}.")
+            mess = f"Cannot build more on {self.name}."
+            display_message(screen, game.font, 500, 40, mess)
+        pg.display.update()
+        pg.time.wait(2000)
     
     @property
     def field_type(self):
@@ -169,8 +199,12 @@ class Property(Field):
                 display_message(screen, game.font, 500, 40, message)
             pg.display.update()
             pg.time.wait(4000)
-                
+    
+    def handle_unmortage(self, screen, game):
+        pass
+
     def action(self, screen, game):
+        visualise(screen, game)
         if not self.owner:
             '''option 1'''
             message = f"{game.get_player().name}, would you like to buy {self.name} for ${self.price}?"
@@ -178,19 +212,33 @@ class Property(Field):
             if yes_or_no == "Yes":
                 success = game.get_player().buy_property(self, screen, game)
                 if success:
+                    self.owner = game.get_player()
                     return
             self.auction(screen, game)
             #turg tuk
         elif self.owner == game.get_player():
             '''option 2 -> Player owns this property, allow property management'''
-            print(f"{game.get_player().name}, you own {self.name}. Would you like to build a house?")
-            self.build_house(screen, game)
+            if self.mortaged:
+                message = f"{self.owner.get_name()} mortaged property!"
+                display_message(screen, game.font, 500, 40, message)
+                pg.display.update()
+                self.handle_unmortage(screen, game)
+            else:
+                message = f"{game.get_player().name}, you own {self.name}. Would you like to build a house?"
+                display_message(screen, game.font, 500, 40, message)
+                self.handle_build_house(screen, game)
         else:
             '''option 3 -> Property is owned by someone else, pay rent'''
-            rent = self.rent(screen, game)
-            print(f"{game.get_player().name} pays ${rent} in rent to {self.owner.name}.")
-            game.get_player().pay(rent, self) # calling player to pay if they cant pay
-        
+            if self.mortaged:
+                message = f"{self.owner.get_name()} mortaged the property! Stay for free!"
+                display_message(screen, game.font, 500, 40, message)
+            else:
+                rent = self.rent(screen, game)
+                pg.display.update()
+                message = f"{game.get_player().name}, pay ${rent} to {self.owner.get_name()}?"
+                yes_or_no = decision_menu(screen, message, [["Yes", (300, 300),(100, 50)]], game)
+                if yes_or_no == "Yes":
+                    game.get_player().needs_to_pay(rent, screen, game, self.owner) 
 
 
 #should impolement execute/play

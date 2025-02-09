@@ -22,7 +22,7 @@ class Player():
         self.image = pg.transform.scale(self.image, (w, HIGTH))
         self.rect = self.image.get_rect()
         self.position = [1000, 560] # starting position # this should be indx
-        self.money = 19 # the starting amount of money
+        self.money = 3000 # the starting amount of money
         self.life = 100 # in percents
         self.properties = []
         self.pos_indx = 0
@@ -35,6 +35,16 @@ class Player():
     def get_money(self):
         return self.money
     
+    def get_properties(self):
+        return self.properties
+    
+    def recieve_money(self, screen, game, money):
+        message = f"{self.name} recieved {money}!"
+        self.money += money
+        display_message(screen, game.font, 500, 40, message)
+        pg.display.update()
+        pg.time.wait(2000)
+
     def get_life(self):
         return self.life
     
@@ -105,27 +115,27 @@ class Player():
 
 
 
-
-
-
-
-        
+    #to to 
     def declare_bankruptcy(self, screen, game, creditor=None):
-        """Handles bankruptcy: Transfers assets and removes player from game."""
         if creditor:
-            print(f"{self.name} is bankrupt and must give everything to {creditor.name}!")
-            for property in self.owned_properties:
-                property.owner = creditor  # Transfer ownership
+            message = f"{self.name} gives everything to {creditor.get_name()}!"
+            display_message(screen, game.font, 500, 40, message)
+            pg.display.update()
+            pg.time.wait(2000)
+            for property in self.properties:
+                property.change_owner(creditor)  # Transfer ownership
+                creditor.gain_property(property)
             creditor.money += self.money  # Transfer remaining money
         else:
-            print(f"{self.name} is bankrupt and out of the game! All assets return to the bank.")
+            message = f"{self.name} is bankrupt and out of the game! All assets return to the bank."
+            display_message(screen, game.font, 500, 40, message)
+            pg.display.update()
+            pg.time.wait(2000)
             for property in self.owned_properties:
                 property.owner = None  # Reset ownership
-
         self.active = False  # Flag for elimination
         game.remove_player(self)
-        # If the player has nothing to sell, they go bankrupt
-        return False  # No possible way to raise money
+        return False
     
     def has_what_to_mortage(self):
         for pr in self.properties:
@@ -222,13 +232,41 @@ class Player():
            # elif decision == "Declare Bankruptcy":#or when we catn pay???? in the prev func
              #   pass#bankrupcy = true
         return raised
-
-    #only in some functions go bankrupt so we wont offer here
-    def pay_amount(self, amount, screen, game, creditor=None):
+    
+    def needs_to_pay(self, amount, screen, game, creditor=None):
         if self.money >= amount:
             self.money -= amount
             if creditor:
-                creditor.get_money(amount)
+                creditor.recieve_money(screen, game, amount)
+            return True
+        raised = self.try_to_raise_money(amount, screen, game)
+        visualise(screen, game)
+        message = f"Raised {raised} from {amount} needed"
+        display_message(screen, game.font, 500, 40, message)
+        while raised < amount:
+            visualise(screen, game)
+            message = f"Raised {raised} from {amount} needed"
+            buttons = [["Raise more", (300, 300),(100, 50)],  ["Bankrupt",(400, 300), (100, 50)]]
+            dec = decision_menu(screen, message, buttons, game)
+            if dec == "Raise more":
+                raised += self.try_to_raise_money(amount, screen, game)
+            elif dec == "Bankrupt":
+                self.declare_bankruptcy(screen, game, creditor)
+                return False
+        #success
+        self.money -= amount
+        if creditor:
+            creditor.recieve_money(screen, game, amount)
+        message = f"Congrats! Raised {raised} from {amount} needed"
+        display_message(screen, game.font, 500, 40, message)
+        pg.display.update()
+        pg.time.wait(2000)
+        return True
+    
+    #only in some functions go bankrupt so we wont offer here
+    def pay_amount(self, amount, screen, game):
+        if self.money >= amount:
+            self.money -= amount
             return True
         raised = self.try_to_raise_money(amount, screen, game)
 
@@ -245,11 +283,6 @@ class Player():
                 raised += self.try_to_raise_money(amount, screen, game)
             elif dec == "Quit":
                 return False
-            
-        #success
-        self.money -= amount
-        if creditor:
-            creditor.get_money(amount)
         return True
     
     def gain_property(self, property):
