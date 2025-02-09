@@ -26,18 +26,6 @@ class Game:
     characters_paths = [f"Monopoly/assets/character{i}.png" for i in range(7)]#
     characters_dict = {0 : CleaningLady, 1 : Roommate, 2 : Tutor, 3 : TicketChecker, 4 : GirlsMagnet, 5 : BookWorm, 6 : NightLife}
 
-    def get_players(self):
-        return self.players()
-        
-    def remove_player(self, player):
-        self.players.remove(player)
-
-    def get_player(self):
-        return self.player
-    
-    def get_buttons(self):
-        return self.buttons
-    
     def __init__(self):
         pg.init()
         self.screen = pg.display.set_mode(SCREEN_DIMENSIONS)
@@ -49,6 +37,19 @@ class Game:
         self.player = None
         self.board = Board()
 
+    def get_players(self):
+        return self.players
+        
+    def remove_player(self, player):
+        self.players.remove(player)
+
+    def get_player(self):
+        return self.player
+    
+    def get_buttons(self):
+        return self.buttons
+    
+   
     def draw_background(self):
         self.screen.fill(SCREEN_COLOR)   
         self.screen.blit(self.background, (0, 100))
@@ -288,12 +289,11 @@ class Game:
             # 1) ROLL -> add rolling button
             dice1, dice2 = self.dice.roll(self.screen)
             total = dice1 + dice2
-            pg.time.wait(1000)#1s
             if in_jail:
                 self.handle_jail(self.player, dice1, dice2, self.screen)
                 return 
             # 2) MOVE
-            self.board.move(self.player, total, self.screen, self)
+            self.board.move(self.player, total, self.screen, self)      
             # 3) GET FIELD
             curr_field_indx = self.player.get_pos_indx()
             curr_field = self.board.get_field_from_indx(curr_field_indx)

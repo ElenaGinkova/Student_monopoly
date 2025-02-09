@@ -17,13 +17,13 @@ JAIL_INDX = 28
 #indx, name, position, action, price, color_group,
 class Board:
     def __init__(self):
-        self.fields = [Property(0, "0", (1100,600), "property", 0, 1), Property(1, "1", (1000,600), "property", 0, 1),
-        Property(2, "2", (900,600), "property", 0, 1),Property(3, "3", (800,600), "property", 0, 1),
-        Property(4, "4", (700,600), "property", 0, 1),Property(5, "5", (600,600), "property", 0, 1),
-        Property(6, "6", (500,600), "property", 0, 1),Property(7, "7", (400,600), "property", 0, 1),
-        Property(8, "8", (300,600), "property", 0, 1),Property(9, "9", (200,600), "property", 0, 1),
-        Property(10, "10", (100,600), "property", 0, 1),Property(11, "11", (100,500), "property", 0, 1),
-        Property(12, "12", (100,400), "property", 0, 1)] 
+        self.fields = [Property(0, "0", (1100,600), "property", 20, 1), Property(1, "1", (1000,600), "property", 20, 1),
+        Property(2, "2", (900,600), "property", 20, 1),Property(3, "3", (800,600), "property", 20, 1),
+        Property(4, "4", (700,600), "property", 20, 1),Property(5, "5", (600,600), "property", 20, 1),
+        Property(6, "6", (500,600), "property", 20, 1),Property(7, "7", (400,600), "property", 20, 1),
+        Property(8, "8", (300,600), "property", 20, 1),Property(9, "9", (200,600), "property", 20, 1),
+        Property(10, "10", (100,600), "property", 20, 1),Property(11, "11", (100,500), "property", 20, 1),
+        Property(12, "12", (100,400), "property", 20, 1)] 
 
     def get_pos_from_indx(self, indx):
         return self.fields[indx].position
@@ -76,5 +76,7 @@ class Dice:
                     self.dice1 = random.randint(1,6)
                     self.dice2 = random.randint(1,6)
                     self.vis_dices(screen)
+                    pg.display.update()
+                    pg.time.wait(2000)
                     return self.dice1, self.dice2
                 

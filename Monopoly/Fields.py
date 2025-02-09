@@ -112,63 +112,76 @@ class Property(Field):
     
 
     #to implement
-    def auction(self, property, screen, game):
+    def auction(self, screen, game):
         visualise(screen, game)
-        message = f"Auction starts for {property.get_name()}!"
-        display_message(screen, game.font, 500, 40, message)
+        auc_message = f"Auction starts for {self.get_name()}!"
+        display_message(screen, game.font, 500, 40, auc_message)
         auction_price = 1
-        active_players = game.get_players()
-        current_bidder = None
-
+        active_players = game.get_players().copy()
+        active_players.remove(game.get_player())
+        
         while len(active_players) > 1:
-            # Show auction status
-            visualise(screen,game)
-            message = f"{property.get_name()} is being auctioned. Current bid: {auction_price}. Next bid?"
-            display_message(screen, game.font, 500, 40, message)
-            # Create bid/pass buttons for each active player
-            buttons = [[f"{player.name} Bid +$10", (200, 200 + i * 70), (150, 50)] for i, player in enumerate(active_players)]
-            buttons.append(["Pass", (200, 200 + len(active_players) * 70), (150, 50)])
-            decision = decision_menu(screen, message, buttons, game)
-
+            buttons = [["Bid", (300, 370), (150, 50)], ["Pass", (500, 370), (150, 50)]]
+            last_bidder = None
             # Process bid or pass
-            for player in active_players:
-                if decision == f"{player.name} Bid +$10":
+            for player in list(active_players):
+                curr_bid_mess = f"Current bid: ${auction_price} for {self.get_name()}"
+                pl_mess = f"{curr_bid_mess}. {player.name} + $10 Bid?"
+                decision = decision_menu(screen, pl_mess, buttons, game)
+                if decision == "Bid":
                     if player.can_pay(auction_price + 10):
                         auction_price += 10
-                        current_bidder = player
-                        message = f"{player.name} bid ${auction_price}."
-                        display_message(screen, game.font, 500, 40, message)
+                        last_bidder = player
+                        bid_message = f"{player.name} bid ${auction_price}."
+                        display_message(screen, game.font, 500, 40, bid_message)
                     else:
-                        message = f"{player.name} can't afford to bid higher!"
-                        display_message(screen, game.font, 500, 40, message)
+                        bid2_message = f"{player.name} can't afford to bid higher! Disqualified!"
+                        display_message(screen, game.font, 500, 40, bid2_message)
+                        active_players.remove(player)
                 elif decision == "Pass":
-                    active_players.remove(current_bidder)
-                    message = f"{current_bidder.name} passed."
-                    display_message(screen, game.font, 500, 40, message)
+                    active_players.remove(player)
+                    pass_message = f"{player.name} passed."
+                    display_message(screen, game.font, 500, 40, pass_message)
+                pg.display.update()
                 pg.time.wait(2000)
+                if len(active_players) == 1: break
 
-        # If at least one player bid, they win the auction
-        if current_bidder:
-            current_bidder.pay_amount(auction_price, screen, game)
-            current_bidder.gain_property(property)
-            self.owner = current_bidder
-            message = f"{current_bidder.name} wins {property.name} for {auction_price}!"
-            display_message(screen, game.font, 500, 40, message)
-            return current_bidder
-        message = f"No one bid on {property.name}. It remains unowned."
-        display_message(screen, game.font, 500, 40, message)
-        return None  # No one won the auction
-
+            if len(active_players) == 1 and last_bidder != active_players[0]:
+                # If only one player remains, let them place a final bid
+                final_player = active_players[0]
+                final_bid_mess = f"{final_player.name}, do you want to buy for ${auction_price}?"
+                final_decision = decision_menu(screen, final_bid_mess, [["Yes", (300, 370), (150, 50)], ["No", (500, 370), (150, 50)]], game)
+                if final_decision == "Yes":
+                    last_bidder = final_player  # They bid at the current auction price
+                else:
+                    active_players.remove(final_player)  # No one wins
+                        
+            if last_bidder:
+                winner_message = f"{active_players[0].name} bougth {self.get_name()} for {auction_price}."
+                original_price = self.price
+                self.price = auction_price
+                active_players[0].buy_property(self, screen, game)
+                self.price = original_price
+                visualise(screen, game)
+                display_message(screen, game.font, 500, 40, winner_message)
+            else:
+                message = f"No one won in the auction for {self.name}! The property remains to no one."
+                visualise(screen, game)
+                display_message(screen, game.font, 500, 40, message)
+            pg.display.update()
+            pg.time.wait(4000)
+                
 
     def action(self, screen, game):
         if not self.owner:
             '''option 1'''
             message = f"{game.get_player().name}, would you like to buy {self.name} for ${self.price}?"
-            yes_or_no = decision_menu(screen, message, [["Yes", (600, 300),(100, 50)], ["No",(760, 300), (100, 50)]], game)
+            yes_or_no = decision_menu(screen, message, [["Yes", (300, 300),(100, 50)], ["No",(450, 300), (100, 50)]], game)
             if yes_or_no == "Yes":
                 success = game.get_player().buy_property(self, screen, game)
                 if success:
-                    return 
+                    return
+            self.auction(screen, game)
             #turg tuk
         elif self.owner == game.get_player():
             '''option 2 -> Player owns this property, allow property management'''

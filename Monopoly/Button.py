@@ -82,6 +82,7 @@ def display_message(screen, font, x, y, txt):
 
 def visualise(screen, game):
     game.draw_background()
+    game.dice.vis_dices(screen)
     font = pg.font.Font(None, 32)
     for p in game.get_players():
         p.draw(screen)
@@ -96,8 +97,8 @@ def decision_menu(screen, message, buttons_info, game):
     buttons = [Button(text=option[0], position=option[1], size=option[2]) for option in buttons_info]
     while True:
         visualise(screen, game)
-        pg.draw.rect(screen, GREEN_COLOR, (580, 240, 370, 150))
-        display_message(screen, pg.font.Font(None, 32), 600, 250,message)
+        pg.draw.rect(screen, GREEN_COLOR, (150, 220, 700, 300))
+        display_message(screen, pg.font.Font(None, 32), 250, 250,message)
         for button in buttons:
             button.draw(screen)
         pg.display.flip()

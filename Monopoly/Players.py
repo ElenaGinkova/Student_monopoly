@@ -22,7 +22,7 @@ class Player():
         self.image = pg.transform.scale(self.image, (w, HIGTH))
         self.rect = self.image.get_rect()
         self.position = [1000, 560] # starting position # this should be indx
-        self.money = 3000 # the starting amount of money
+        self.money = 19 # the starting amount of money
         self.life = 100 # in percents
         self.properties = []
         self.pos_indx = 0
@@ -88,7 +88,7 @@ class Player():
             message = f"Succesfully bought {property.get_name()}"
             display_message(screen, game.font, 500, 40, message)
             return True
-        buttons = [["Raise money", (600, 450), (100, 50)], ["Dont buy", (600, 520), (200, 50)]]
+        buttons = [["Raise money", (300, 300), (100, 50)], ["Dont buy", (450, 300), (200, 50)]]
         message = "Do you want to raise money to buy?"
         visualise(screen, game)
         dec = decision_menu(screen, message, buttons, game)
@@ -208,7 +208,7 @@ class Player():
         raised = 0
         while self.money < amount:
             message = f"{self.name}, how do you want to raise money?"
-            decision = decision_menu(screen, message, [["Mortgage Property", (300, 300),(100, 50)], ["Sell House",(400, 300), (100, 50)], ["Cancel",(500, 300), (100, 50)]], game)
+            decision = decision_menu(screen, message, [["Mortgage Property", (300, 300),(100, 50)], ["Sell House",(450, 300), (100, 50)], ["Cancel",(600, 300), (100, 50)]], game)
             #("Trade with Player", (600, 590), (200, 50)) -> to add
             #sell hotel
             if decision == "Cancel":
@@ -252,14 +252,3 @@ class Player():
     
     def gain_property(self, property):
         self.properties.append(property)
-
-
-class FMIStudent(Player):
-    def __init__(self):
-        super().__init__()
-
-    @property
-    def special_power(self):
-        pass
-
-
