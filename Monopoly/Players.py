@@ -263,16 +263,3 @@ class FMIStudent(Player):
         pass
 
 
-
-#    def update(self):
-#        key = pygame.key.get_pressed()
-#        last = self.rect.copy()
-#        if key[pygame.K_LEFT]:
-#            self.rect.x -= 10
-#        if key[pygame.K_RIGHT]:
-#            self.rect.x += 10
-#        if key[pygame.K_UP]:
-#            self.rect.y -= 10
-#        if key[pygame.K_DOWN]:
-#            self.rect.y += 10
-#        #self.prevent_collision(last)
