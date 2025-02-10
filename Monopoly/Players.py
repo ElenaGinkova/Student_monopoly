@@ -10,7 +10,6 @@ HIGTH = 100
 SCREEN_COLOR = (30, 30, 30)
 BACKGROUND = pg.image.load('Monopoly/assets/BoardUNI.png')
 BACKGROUND = pg.transform.smoothscale(BACKGROUND, (1100, 600) )
-#maybe a map of every field and its coords and the next one
 
 class Player():
 
@@ -28,6 +27,7 @@ class Player():
         self.pos_indx = 0
         self.jail = False
         self.active = True#or bankrupt
+        self.add_out_of_jail_card = 0
     
     def get_name(self):
         return self.name
@@ -50,6 +50,30 @@ class Player():
     
     def can_pay(self, amount):
         return self.money >= amount
+    
+    def has_what_to_mortage(self):
+        for pr in self.properties:
+            if pr.can_it_be_mortaged():
+                return True
+        return False
+    
+    def has_houses(self):
+        for pr in self.properties:
+            if pr.has_houses():
+                return True
+        return False
+    
+    def get_propertries_count(self):
+        house_count = 0
+        hotel_count = 0
+        for pr in self.properties:
+            house_count += pr.get_house_count()
+            if pr.has_hotel():
+                hotel_count += 1
+        return house_count, hotel_count
+        
+    def add_out_of_j_card(self):
+        self.out_of_jail_card += 1
 
     def move(self, field, screen, game):
         self.position = field.get_position()
@@ -94,10 +118,6 @@ class Player():
     def excexute_field(self):
         pass
 
-   
-    
-    
-
     def buy_property(self, property, screen, game):
         if self.money >= property.get_price():
             self.money -= property.get_price()
@@ -118,9 +138,6 @@ class Player():
         elif dec == "Не купувайте":
             return False
         return False  # Default return if no valid action is taken
-
-
-
 
     #to to 
     def declare_bankruptcy(self, screen, game, creditor=None):
@@ -143,19 +160,7 @@ class Player():
         self.active = False  # Flag for elimination
         game.remove_player(self)
         return False
-    
-    def has_what_to_mortage(self):
-        for pr in self.properties:
-            if pr.can_it_be_mortaged():
-                return True
-        return False
-    
-    def has_houses(self):
-        for pr in self.properties:
-            if pr.has_houses():
-                return True
-        return False
-    
+
     #takes the whole screen
     def handle_mortage(self, screen, game):
         money = 0

@@ -76,7 +76,7 @@ class CardGetOutOfJailFree(Card):
 
     def action(self, game):
         decision_menu(game.screen, self.text, [["Ok", (300, 370), (150, 50)]], game)
-        game.get_player().add_get_out_of_jail_card(self)
+        game.get_player().add_out_of_j_card()
 
 
 #to do
@@ -88,7 +88,8 @@ class CardPayPerHouseHotel(Card):
 
     def action(self, game):
         player = game.get_player()
-        total_cost = (player.count_houses() * self.house_fee) + (player.count_hotels() * self.hotel_fee)
+        house_cost = player.count_houses() * self.house_fee
+        hotel_cost = player.count_hotels() * self.hotel_fee
         decision_menu(game.screen, self.text, [["Ok", (300, 370), (150, 50)]], game)
         decision_menu(game.screen, f"You owe ${total_cost}!", [["Ok", (300, 370), (150, 50)]], game)
         player.pay_money(game.screen, game, total_cost)

@@ -43,6 +43,9 @@ class Property(Field):
     def has_houses(self):
         return len(self.houses)
     
+    def get_house_count(self):
+        return len(self.houses)
+    
     def get_house_money(self):
         self.houses.pop()
         return self.house_price // 2 # 50%
