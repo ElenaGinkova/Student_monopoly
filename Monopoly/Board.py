@@ -17,6 +17,7 @@ JAIL_INDX = 28
 #indx, name, position, action, price, color_group,
 class Board:
     def __init__(self):
+        self.bus_indexes = [6, 13, 22, 32]
         self.fields = [Property(0, "0", (1100,600), "property", 20, 1), Property(1, "1", (1000,600), "property", 20, 1),
         Property(2, "2", (900,600), "property", 20, 1),Property(3, "3", (800,600), "property", 20, 1),
         Property(4, "4", (700,600), "property", 20, 1),Property(5, "5", (600,600), "property", 20, 1),
@@ -42,6 +43,13 @@ class Board:
     def go_to_jail(self, player, screen, game):
         self.move(player, 0, screen, JAIL_INDX)
         player.go_to_jail()
+
+    def get_next_bus(self, indx):
+        if indx >= self.bus_indexes[3]: return self.fields[0]
+
+        for i in self.bus_indexes:
+            if i > indx:
+                return self.fields[i]
 
         
 #чифтове също трябва да се отчитат        

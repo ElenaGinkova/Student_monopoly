@@ -67,17 +67,14 @@ class CardGoToJail(Card):
         pg.time.wait(2000)
         game.go_to_jail()
 
-
-
 # to do
 class CardGetOutOfJailFree(Card):
     def __init__(self, text):
         super().__init__(text)
 
     def action(self, game):
-        decision_menu(game.screen, self.text, [["Ok", (300, 370), (150, 50)]], game)
+        decision_menu(game.screen, self.text, [["Добре", (300, 370), (150, 50)]], game)
         game.get_player().add_out_of_j_card()
-
 
 #to do
 class CardPayPerHouseHotel(Card):
@@ -88,12 +85,13 @@ class CardPayPerHouseHotel(Card):
 
     def action(self, game):
         player = game.get_player()
-        house_cost = player.count_houses() * self.house_fee
-        hotel_cost = player.count_hotels() * self.hotel_fee
-        decision_menu(game.screen, self.text, [["Ok", (300, 370), (150, 50)]], game)
-        decision_menu(game.screen, f"You owe ${total_cost}!", [["Ok", (300, 370), (150, 50)]], game)
-        player.pay_money(game.screen, game, total_cost)
-
+        house_count, hotel_count = player.get_propertries_count()
+        house_cost = house_count * self.house_fee
+        hotel_cost = hotel_count * self.hotel_fee
+        mess = f"Трябва да платите {house_cost} за {house_count} къщи и {hotel_cost} за {hotel_count} хотели."
+        decision_menu(game.screen, self.text, [["Добре", (300, 370), (150, 50)]], game)
+        decision_menu(game.screen, mess, [["Плати", (300, 370), (150, 50)]], game)
+        player.needs_to_pay(house_cost + hotel_cost, game.screen, game)
 
 #to do
 class CardNearestRailroad(Card):
@@ -101,10 +99,11 @@ class CardNearestRailroad(Card):
         super().__init__(text)
 
     def action(self, game):
-        decision_menu(game.screen, self.text, [["Ok", (300, 370), (150, 50)]], game)
-        game.get_player().move_to_next_railroad(game)
-
-
+        player = self.get_player()
+        decision_menu(game.screen, self.text, [["Добре иди!", (300, 370), (150, 50)]], game)
+        field = game.board.get_next_bus_field(player.pos_indx)
+        player.move(field, game.screen, game)
+        field.action(game.screen, game)
 
 #to do
 class CardPayAllPlayers(Card):
@@ -113,7 +112,7 @@ class CardPayAllPlayers(Card):
         self.amount = amount
 
     def action(self, game):
-        decision_menu(game.screen, self.text, [["Ok", (300, 370), (150, 50)]], game)
+        decision_menu(game.screen, self.text, [["Добре", (300, 370), (150, 50)]], game)
         game.get_player().pay_all_players(game, self.amount)
 
 
