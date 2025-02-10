@@ -1,7 +1,8 @@
 import random
 import pygame as pg
 from Button import Button,display_message
-from Fields import Property
+from FieldTypes.Property import Property
+from FieldTypes.Chance import Chance
 import sys
 
 
@@ -14,17 +15,20 @@ FIELD_COUNT = 34
 GO_MONEY = 200
 JAIL_INDX = 28
 
-#indx, name, position, action, price, color_group,
+#(self, indx, name, position, action):
 class Board:
     def __init__(self):
         self.bus_indexes = [6, 13, 22, 32]
-        self.fields = [Property(0, "0", (1100,600), "property", 20, 1), Property(1, "1", (1000,600), "property", 20, 1),
-        Property(2, "2", (900,600), "property", 20, 1),Property(3, "3", (800,600), "property", 20, 1),
-        Property(4, "4", (700,600), "property", 20, 1),Property(5, "5", (600,600), "property", 20, 1),
-        Property(6, "6", (500,600), "property", 20, 1),Property(7, "7", (400,600), "property", 20, 1),
-        Property(8, "8", (300,600), "property", 20, 1),Property(9, "9", (200,600), "property", 20, 1),
-        Property(10, "10", (100,600), "property", 20, 1),Property(11, "11", (100,500), "property", 20, 1),
-        Property(12, "12", (100,400), "property", 20, 1)] 
+        self.fields = [Property(0, "GO", (1100,600), 20, 1), Property(1, "property", (1000,600), 20, 1),
+        Property(2, "property", (900,600), 20, 1), Property(3, "property", (800,600), 20, 1),
+        Property(4, "property", (700,600), 20, 1), Property(5, "property", (600,600), 20, 1),
+        Property(6, "property", (500,600), 20, 1), Property(7, "property", (400,600), 20, 1),
+        Chance(8, "Карта пробвай се!", (300,600)), Property(9, "property", (200,600), 20, 1),
+        Property(10, "property", (100,600), 20, 1), Property(11, "property", (100,500), 20, 1),
+        Property(12, "property", (100,400), 20, 1), Property(13, "property", (100,400), 20, 1),
+        
+        Chance(26, "Карта пробвай се!", (900,200))
+        ] 
 
     def get_pos_from_indx(self, indx):
         return self.fields[indx].position
@@ -44,7 +48,7 @@ class Board:
         self.move(player, 0, screen, JAIL_INDX)
         player.go_to_jail()
 
-    def get_next_bus(self, indx):
+    def get_next_bus_field(self, indx):
         if indx >= self.bus_indexes[3]: return self.fields[0]
 
         for i in self.bus_indexes:

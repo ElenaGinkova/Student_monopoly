@@ -2,34 +2,15 @@ import random
 import pygame as pg
 from Button import Button
 from Button import display_message, ok_button, decision_menu, visualise
+from FieldTypes.Fields import Field
 import sys
 
 TYPE_LIST = ["Property", "Sanction"] # str repr
 
 
-class Field:
-    def __init__(self, indx, name, position, action):
-        self.indx = indx # in the board
-        self.name = name
-        self.position = position
-        self.action_str = action # str repr of act
-        #extra rules
-
-    def get_name(self):
-        return self.name
-    
-    def action(self, player, screen):
-        pass
-
-    def get_position(self):
-        return self.position
-    
-    def get_indx(self):
-        return self.indx
-
 class Property(Field):
-    def __init__(self, indx, name, position, action, price, color_group, owner = None):
-        super().__init__(indx, name, position, action)
+    def __init__(self, indx, name, position, price, color_group, owner = None):
+        super().__init__(indx, name, position)
         self.owner = owner
         self.price = price
         self.color_group = color_group
@@ -239,21 +220,3 @@ class Property(Field):
                 message = f"{game.get_player().name}, трябва да платите ${rent} на {self.owner.get_name()}!"
                 yes_or_no = decision_menu(screen, message, [["ОК", (300, 300),(100, 50)]], game)
                 game.get_player().needs_to_pay(rent, screen, game, self.owner) 
-
-
-#should impolement execute/play
-def Sanction(Field):
-    def __init__(self, indx, name, position, action, sanction):
-        super().__init__(indx, name, position, action)
-        self.sanction = sanction
-    @property
-    def field_type(self):
-        return TYPE_LIST[1]
-    
-    def __repr__(self):
-        return f"{self.name} ({self.field_type}) на {self.position} - санцкия: ${self.sanction}"
-    
-    def action(self, screen, game):
-        message = f"{game.get_player().name}, трябва да платите санкция ${self.sanction}?"
-        ok_button(message, screen, game)
-        game.get_player().pay_amount(self.sanction, screen, game)

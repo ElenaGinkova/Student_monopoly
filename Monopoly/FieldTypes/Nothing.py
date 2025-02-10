@@ -1,11 +1,11 @@
-from Fields import Field
+from FieldTypes.Fields import Field
 from Button import decision_menu
 import pygame as pg
 
 
 class Nothing(Field):
-    def __init__(self, indx, name, position, action, text):
-        super().__init__(indx, name, position, action)
+    def __init__(self, indx, name, position, text):
+        super().__init__(indx, name, position)
         self.text = text
 
     def action(self, game):

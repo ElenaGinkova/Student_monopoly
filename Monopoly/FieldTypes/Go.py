@@ -1,4 +1,4 @@
-from Fields import Field
+from FieldTypes.Fields import Field
 from Button import display_message
 import pygame as pg
 
@@ -7,8 +7,8 @@ GO_MONEY = 200
 
 
 class Go(Field):
-    def __init__(self, indx, name, position, action):
-        super().__init__(indx, name, position, action)
+    def __init__(self, indx, name, position):
+        super().__init__(indx, name, position)
 
     def action(self, game):
         display_message(self.screen, self.font,500,50,"Стъпихте на \"Джобни от дома\"!")

@@ -1,5 +1,5 @@
 import pygame as pg
-from Button import Button, visualise, decision_menu, display_message, GREEN_COLOR
+from Button import visualise, decision_menu, display_message, GREEN_COLOR
 import sys
 
 
@@ -71,7 +71,7 @@ class Player():
             if pr.has_hotel():
                 hotel_count += 1
         return house_count, hotel_count
-        
+    
     def add_out_of_j_card(self):
         self.out_of_jail_card += 1
 

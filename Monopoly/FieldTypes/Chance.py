@@ -1,12 +1,14 @@
-from Fields import Field
+from FieldTypes.Fields import Field
 from Button import decision_menu, display_message
 from random import random
 import pygame as pg
 
 
-CARD_COUNT = 30
+CARD_COUNT = 18
 
 
+# to do to make them good visualisation card like
+# add more cards
 class Card:
     def __init__(self, text):
         self.text = text
@@ -35,48 +37,37 @@ class CardLoseMoney(Card):
 
 
 class CardMoveForward(Card):
-    def __init__(self, text, field):
+    def __init__(self, text, field_indx):
         super().__init__(text)
-        self.field = field
+        self.field_indx = field_indx
 
     def action(self, game):
         decision_menu(game.screen, self.text, [["Добре", (300, 370), (150, 50)]], game)
-        game.get_player().move(game, self.field, game.screen, game)
-        self.field.action(game.screen, game)
+        field = game.board.get_field_from_indx(self.field_indx)
+        game.get_player().move(game, field, game.screen, game)
+        field.action(game.screen, game)
 
 
-#to do
-# class CardMoveBack(Card):
-#     def __init__(self, text, spaces):
-#         super().__init__(text)
-#         self.spaces = spaces
-
-#     def action(self, game):
-#         decision_menu(game.screen, self.text, [["Ok", (300, 370), (150, 50)]], game)
-#         game.get_player().move_back(game, self.spaces)
-
-
-#to do
 class CardGoToJail(Card):
     def __init__(self, text):
         super().__init__(text)
 
     def action(self, game):
-        display_message(self.screen, self.font,500,50,"Беше ви връчена жълта книжка!")
-        pg.display.update()
-        pg.time.wait(2000)
+        mess = f"{self.text} Беше ви връчена жълта книжка!"
+        decision_menu(game.screen, mess, [["Ехх", (300, 370), (150, 50)]], game)
         game.go_to_jail()
 
-# to do
+
 class CardGetOutOfJailFree(Card):
     def __init__(self, text):
         super().__init__(text)
 
     def action(self, game):
+        mess = f"{self.text} Вече можете да се отървате от жълтата книжка!"
         decision_menu(game.screen, self.text, [["Добре", (300, 370), (150, 50)]], game)
         game.get_player().add_out_of_j_card()
 
-#to do
+
 class CardPayPerHouseHotel(Card):
     def __init__(self, text, house_fee, hotel_fee):
         super().__init__(text)
@@ -93,8 +84,8 @@ class CardPayPerHouseHotel(Card):
         decision_menu(game.screen, mess, [["Плати", (300, 370), (150, 50)]], game)
         player.needs_to_pay(house_cost + hotel_cost, game.screen, game)
 
-#to do
-class CardNearestRailroad(Card):
+
+class CardNearestBus(Card):
     def __init__(self, text):
         super().__init__(text)
 
@@ -105,7 +96,7 @@ class CardNearestRailroad(Card):
         player.move(field, game.screen, game)
         field.action(game.screen, game)
 
-#to do
+
 class CardPayAllPlayers(Card):
     def __init__(self, text, amount):
         super().__init__(text)
@@ -113,7 +104,13 @@ class CardPayAllPlayers(Card):
 
     def action(self, game):
         decision_menu(game.screen, self.text, [["Добре", (300, 370), (150, 50)]], game)
-        game.get_player().pay_all_players(game, self.amount)
+        players = game.get_players()
+        player = game.get_player()
+        for pl in players:
+            decision_menu(game.screen, f"Плати на {pl.get_name()}", [["Добре", (300, 370), (150, 50)]], game)
+            succ = player.needs_to_pay(self.amount, game.screen, game, pl)
+            if not succ:
+                break
 
 
 #Пробвай се - преработи, добави
@@ -137,20 +134,30 @@ class Chance(Field):
              CardPayAllPlayers("Платете на всички играчи по $50 за вашето празненство!", 50),
 
              CardMoveForward("Напреднете до ДЖОБНИ ОТ ДОМА и вземете $200!", 0),
-             #CardMoveForward("Напреднете до следващата жп станция. Ако е свободна, може да я купите. Ако не - плащате наема!", "next_station"),
-             #CardMoveBack("Взехте грешен самолетен билет! Преместете се 3 полета назад!", 3),
 
              CardGoToJail("Идете в ЗАТВОРА! Не минавате през СТАРТ!"),
 
              CardGetOutOfJailFree("Излезте от ЗАТВОРА безплатно! (Задръжте тази карта)"),
-             CardNearestRailroad("Напреднете до най-близката ЖП станция. Ако е свободна, може да я купите. Ако не - плащате наем!"),
+             CardNearestBus("Напреднете до най-близката ЖП станция. Ако е свободна, може да я купите. Ако не - плащате наем!"),
              ]
-    
-    def __init__(self, indx, name, position, action):
-        super().__init__(indx, name, position, action)
+    #CardMoveForward("Напреднете до следващата жп станция. Ако е свободна, може да я купите. Ако не - плащате наема!", "next_station"),
+    #CardMoveBack("Взехте грешен самолетен билет! Преместете се 3 полета назад!", 3)
+
+    def __init__(self, indx, name, position):
+        super().__init__(indx, name, position)
 
     def action(self, game):
         card_num = random.randint(0, CARD_COUNT - 1)
         card = self.CARDS[card_num]
         card.action(game)
 
+
+#to do
+# class CardMoveBack(Card):
+#     def __init__(self, text, spaces):
+#         super().__init__(text)
+#         self.spaces = spaces
+
+#     def action(self, game):
+#         decision_menu(game.screen, self.text, [["Ok", (300, 370), (150, 50)]], game)
+#         game.get_player().move_back(game, self.spaces)

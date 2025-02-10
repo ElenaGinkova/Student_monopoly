@@ -50,7 +50,6 @@ class Game:
     def get_buttons(self):
         return self.buttons
     
-   
     def draw_background(self):
         self.screen.fill(SCREEN_COLOR)   
         self.screen.blit(self.background, (0, 100))

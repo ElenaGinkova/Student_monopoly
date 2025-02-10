@@ -1,11 +1,11 @@
-from Fields import Field
+from FieldTypes.Fields import Field
 from Button import display_message
 import pygame as pg
 
 
 class Go_to_jail(Field):
-    def __init__(self, indx, name, position, action):
-        super().__init__(indx, name, position, action)
+    def __init__(self, indx, name, position):
+        super().__init__(indx, name, position)
 
     def action(self, game):
         display_message(self.screen, self.font,500,50,"Беше ви връчена жълта книжка!")
