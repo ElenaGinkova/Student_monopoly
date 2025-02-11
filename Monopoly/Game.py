@@ -38,6 +38,9 @@ class Game:
         self.player = None
         self.board = Board()
 
+        self.effect = None
+        self.effect_turns_left = 0
+
     def get_players(self):
         return self.players
         
@@ -267,15 +270,14 @@ class Game:
     #add mortage/unmortage button as option 
     def take_turn(self, player):
         self.dice = Dice()
-        self.dice.vis_dices(self.screen)
+        #self.dice.vis_dices(self.screen)
         self.player = player
         rolling_doubles = 0 
-        in_jail = self.player.is_in_jail
 
         #we need end of turn 
         while True:
             visualise(self.screen, self)
-            self.dice.vis_dices(self.screen)
+            #self.dice.vis_dices(self.screen)
             pg.display.flip()
             if self.player.get_cooldown():
                 decision_menu(self.screen, "Ден за почивка!", [["Ехх", (300, 370), (150, 50)]], self)
@@ -284,7 +286,7 @@ class Game:
             # 1) ROLL -> add rolling button or mortage/unmortage/trade buttons and decision while roll then continue
             dice1, dice2 = self.dice.roll(self.screen)
             total = dice1 + dice2
-            if in_jail:
+            if player.is_in_jail:
                 free = self.handle_jail(self.player, dice1, dice2, self.screen)
                 if not free:
                     return
@@ -301,7 +303,7 @@ class Game:
                 display_message(self.screen, self.font,500,50,"Хвърлихте чифт!")
                 if rolling_doubles == 3:
                     decision_menu(self.screen, "Три пъти чифт! Жълта книжка!", [["Ехх", (300, 370), (150, 50)]], self)
-                    self.board.GoToJail(self.player, self.screen, self)
+                    self.board.go_to_jail(self.player, self.screen, self)
                     return  # End turn after going to jail
             # 4) FIELD ACTION
             curr_field.action(self.screen, self)
@@ -324,8 +326,12 @@ class Game:
         #need quit button then - in menu or sth
         while True:
             for player in self.players:
-                self.take_turn(player)
+                if self.effect:
+                    self.effect_turns_left -= 1
+                if self.effect_turns_left == 0:
+                    self.effect = None
 
+                self.take_turn(player)
                 if len(self.players) == 1:
                     decision_menu(self.screen, f"Победител! {self.players[0].get_name()}", [["Йее", (300, 370), (150, 50)]], self)
                     dec = decision_menu(self.screen, "Играй отново?", [["Да", (300, 370), (150, 50)], ["Не", (500, 370), (150, 50)]], self)

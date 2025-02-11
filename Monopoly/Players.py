@@ -32,9 +32,12 @@ class Player():
         self.jail_days = 0
         self.diploms = 0#UNSS
         self.cooldown = 0
-
+        self.reverse_moving = False
 
         self.mystery_shots = 0
+
+    def reverse_move(self):
+        self.reverse_moving = not self.reverse_moving
 
     def count_color_group(self, group_i):
         count = 0
@@ -126,7 +129,6 @@ class Player():
         self.position = field.get_position()
         self.pos_indx = field.get_indx()
         visualise(screen, game)
-        #self.draw(screen)
 
     @property
     def is_in_jail(self):

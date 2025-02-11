@@ -189,6 +189,15 @@ class Property(Field):
     def handle_unmortage(self, screen, game):
         pass
 
+    def handle_effect(self, rent, game):
+        decision_menu(game.screen, f"Има ефект {game.effect} за цените на наеми.", [["Добре", (400, 300),(100, 50)]], game)
+        if game.effect == "Половин цени":
+            return rent // 2
+        elif game.effect == "Двойни цени":
+            return rent * 2
+        elif game.effect == "Безплатно":
+            return 0
+
     def action(self, screen, game):
         visualise(screen, game)
         if not self.owner:
@@ -210,9 +219,10 @@ class Property(Field):
                 pg.display.update()
                 self.handle_unmortage(screen, game)
             else:
-                message = f"{game.get_player().name}, притежавате {self.name}. Искате ли да построите къща?"
-                display_message(screen, game.font, 500, 40, message)
-                self.handle_build_house(screen, game)
+                message = f"{game.get_player().name}, притежавате {self.name}. Искате ли да строите?"
+                dec = decision_menu(screen, message, [["Да", (200, 300),(100, 50)], ["Не", (350, 300),(100, 50)]], game)
+                if dec == "Да":
+                    self.handle_build_house(screen, game)
         else:
             '''option 3 -> Property is owned by someone else, pay rent'''
             if self.mortaged:
@@ -220,6 +230,9 @@ class Property(Field):
                 display_message(screen, game.font, 500, 40, message)
             else:
                 rent = self.rent(screen, game)
+                if game.effect:
+                    rent = self.handle_effect(rent, game)
+                if rent == 0: return
                 pg.display.update()
                 message = f"{game.get_player().name}, трябва да платите ${rent} на {self.owner.get_name()}!"
                 yes_or_no = decision_menu(screen, message, [["ОК", (300, 300),(100, 50)]], game)

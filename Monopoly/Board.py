@@ -10,6 +10,9 @@ from FieldTypes.UNSS import UNSS
 from FieldTypes.Canteen import Canteen
 from FieldTypes.December8 import December8
 from FieldTypes.Bus_property import BusProperty
+from FieldTypes.Radio import Radio
+from FieldTypes.Erasm import Erasm
+from FieldTypes.Exe import Exe
 import sys
 
 
@@ -44,11 +47,11 @@ class Board:
         self.fields = [
             #1
             Go(0, "GO", (1000, 600)), December8(1, "8 декември", (900,600)),
-            Property(2, "def", (810,600), 20, 1), Property(3, "Лападунди", (720,600), 30, 1),
+            Radio(2, "Студентско радио", (810,600)), Property(3, "Лападунди", (720,600), 30, 1),
             Canteen(4, "Стол", (640,600)), Property(5, "Фитнес33", (570,600), 60, 1),
             BusProperty(6, "Христо Ботев", (480,600), 200, 9), Property(7, "Joystation", (390,600), 100, 2),
             Chance(8, "Карта пробвай се!", (300,600)), Property(9, "KFC", (220,600), 120, 2),
-            Property(10, "def", (140,600), 20, 1), GoToJail(11, "Усмири се", (30,600)),
+            Exe(10, "Exe", (140,600)), GoToJail(11, "Усмири се", (30,600)),
             #2
             Property(12, "Тмаркет", (30,500), 140, 3), BusProperty(13, "Зимен дворец", (30,420), 200, 9),
             Property(14, "Сими теви", (30,340), 160, 3), Property(15, "Петлето", (30,260), 180, 4),
@@ -58,7 +61,7 @@ class Board:
             Property(20, "def", (310,80), 20, 1), Property(21, "Исос", (390,80), 240, 5),
             BusProperty(22, "Детски дом", (480,80), 200, 9), Property(23, "Малинова долина", (560,80), 260, 6),
             UNSS(24, "УНСС", (650,80)), Property(25, "Илюжън", (730,80), 280, 6), 
-            Chance(26, "Карта пробвай се!", (810,80)), Property(27, "def", (900,80), 20, 1),
+            Chance(26, "Карта пробвай се!", (810,80)), Erasm(27, "Еразъм!", (900,80)),
             Nothing(28, "Наблюдавайте лудите", (1010, 80), "Този път не сте сред тях"), Property(29, "Клуб 33", (1010,190), 300, 7),
             #4
             Property(30, "def", (1010,270), 20, 1), Property(31, "Плаза", (1010,350), 320, 7),
@@ -69,12 +72,22 @@ class Board:
         return self.fields[indx].position
     
     #Animation for movement
-    def move(self, player, steps, screen, game, indx = 0):
+    def move(self, player, steps, screen, game):
         old_pos_indx = player.get_pos_indx()
-        new_pos_indx = (old_pos_indx + steps) % FIELD_COUNT
-        player.move(self.fields[new_pos_indx], screen, game)
-        if new_pos_indx < old_pos_indx and new_pos_indx != 0:
-            player.recieve_money(screen, game, GO_MONEY)
+        new_pos_indx = old_pos_indx
+        if player.reverse_moving:
+            new_pos_indx -= steps
+            if new_pos_indx < 0:
+                new_pos_indx += FIELD_COUNT
+            player.reverse_move()
+            if new_pos_indx > old_pos_indx and new_pos_indx != 0:
+                player.recieve_money(screen, game, GO_MONEY)
+            player.move(self.fields[new_pos_indx], screen, game)
+        else:
+            new_pos_indx = (old_pos_indx + steps) % FIELD_COUNT
+            player.move(self.fields[new_pos_indx], screen, game)
+            if new_pos_indx < old_pos_indx and new_pos_indx != 0:
+                player.recieve_money(screen, game, GO_MONEY)
     
     def get_field_from_indx(self, indx):
         return self.fields[indx]
@@ -120,7 +133,7 @@ class Dice:
                 if button.is_clicked(event):
                     self.dice1 = random.randint(1,6)
                     self.dice2 = random.randint(1,6)
-                    self.vis_dices(screen)
+                    #self.vis_dices(screen)
                     pg.display.update()
                     pg.time.wait(2000)
                     return self.dice1, self.dice2

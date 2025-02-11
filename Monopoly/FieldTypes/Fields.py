@@ -15,7 +15,7 @@ class Field:
     def get_name(self):
         return self.name
     
-    def action(self, player, screen):
+    def action(self, screen, game):
         pass
 
     def get_position(self):
