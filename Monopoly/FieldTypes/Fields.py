@@ -4,8 +4,6 @@ from Button import Button
 from Button import display_message, ok_button, decision_menu, visualise
 import sys
 
-TYPE_LIST = ["Property", "Sanction"] # str repr
-
 
 class Field:
     def __init__(self, indx, name, position):
@@ -31,9 +29,6 @@ def Sanction(Field):
     def __init__(self, indx, name, position, sanction):
         super().__init__(indx, name, position )
         self.sanction = sanction
-    @property
-    def field_type(self):
-        return TYPE_LIST[1]
     
     def __repr__(self):
         return f"{self.name} ({self.field_type}) на {self.position} - санцкия: ${self.sanction}"

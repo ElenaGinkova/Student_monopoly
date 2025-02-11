@@ -1,6 +1,6 @@
 from FieldTypes.Fields import Field
 from Button import decision_menu, display_message
-from random import random
+import random
 import pygame as pg
 
 
@@ -53,7 +53,7 @@ class CardGoToJail(Card):
         super().__init__(text)
 
     def action(self, game):
-        mess = f"{self.text} Беше ви връчена жълта книжка!"
+        mess = f"{self.text}"
         decision_menu(game.screen, mess, [["Ехх", (300, 370), (150, 50)]], game)
         game.go_to_jail()
 
@@ -90,7 +90,7 @@ class CardNearestBus(Card):
         super().__init__(text)
 
     def action(self, game):
-        player = self.get_player()
+        player = game.get_player()
         decision_menu(game.screen, self.text, [["Добре иди!", (300, 370), (150, 50)]], game)
         field = game.board.get_next_bus_field(player.pos_indx)
         player.move(field, game.screen, game)
@@ -104,8 +104,9 @@ class CardPayAllPlayers(Card):
 
     def action(self, game):
         decision_menu(game.screen, self.text, [["Добре", (300, 370), (150, 50)]], game)
-        players = game.get_players()
+        players = game.get_players().copy()
         player = game.get_player()
+        players.remove(player)
         for pl in players:
             decision_menu(game.screen, f"Плати на {pl.get_name()}", [["Добре", (300, 370), (150, 50)]], game)
             succ = player.needs_to_pay(self.amount, game.screen, game, pl)
@@ -127,7 +128,7 @@ class Chance(Field):
 
              CardLoseMoney("Платете глоба за неправилно паркиране. Дължите $50!", 50),
              CardLoseMoney("Платете данъци върху имотите си. Дължите $100!", 100),
-             CardPayPerHouseHotel("Извънреден ремонт на имоти! Платете $25 за всяка къща и $100 за всеки хотел!", 25, 100),
+             CardPayPerHouseHotel("Платете $25 за всяка къща и $100 за всеки хотел!", 25, 100),
              CardLoseMoney("Крадци ограбиха вашата къща! Загубихте $200!", 200),
              CardLoseMoney("Вашата фирма банкрутира! Загубихте $400!", 400),
 
@@ -146,7 +147,7 @@ class Chance(Field):
     def __init__(self, indx, name, position):
         super().__init__(indx, name, position)
 
-    def action(self, game):
+    def action(self, screen, game):
         card_num = random.randint(0, CARD_COUNT - 1)
         card = self.CARDS[card_num]
         card.action(game)

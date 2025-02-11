@@ -3,6 +3,13 @@ import pygame as pg
 from Button import Button,display_message
 from FieldTypes.Property import Property
 from FieldTypes.Chance import Chance
+from FieldTypes.Go_to_jail import GoToJail
+from FieldTypes.Go import Go
+from FieldTypes.Nothing import Nothing
+from FieldTypes.UNSS import UNSS
+from FieldTypes.Canteen import Canteen
+from FieldTypes.December8 import December8
+from FieldTypes.Bus_property import BusProperty
 import sys
 
 
@@ -15,19 +22,47 @@ FIELD_COUNT = 34
 GO_MONEY = 200
 JAIL_INDX = 28
 
-#(self, indx, name, position, action):
+
+#TO DO
+# -> bus_propery да насл prop ама като пита за къши да казва не а за цена спрямо бройката която притежава
+# -> стол
+# -> радио
+# -> exe
+# -> изпит
+# -> УНСС
+# -> еразъм
+
+
+# chance (self, indx, name, position):
+# go jail (self, indx, name, position):
+# go  (self, indx, name, position):
+# nothing (self, indx, name, position, text):
+# property (self, indx, name, position, price, color_group, owner = None):
 class Board:
     def __init__(self):
         self.bus_indexes = [6, 13, 22, 32]
-        self.fields = [Property(0, "GO", (1100,600), 20, 1), Property(1, "property", (1000,600), 20, 1),
-        Property(2, "property", (900,600), 20, 1), Property(3, "property", (800,600), 20, 1),
-        Property(4, "property", (700,600), 20, 1), Property(5, "property", (600,600), 20, 1),
-        Property(6, "property", (500,600), 20, 1), Property(7, "property", (400,600), 20, 1),
-        Chance(8, "Карта пробвай се!", (300,600)), Property(9, "property", (200,600), 20, 1),
-        Property(10, "property", (100,600), 20, 1), Property(11, "property", (100,500), 20, 1),
-        Property(12, "property", (100,400), 20, 1), Property(13, "property", (100,400), 20, 1),
-        
-        Chance(26, "Карта пробвай се!", (900,200))
+        self.fields = [
+            #1
+            Go(0, "GO", (1000, 600)), December8(1, "8 декември", (900,600)),
+            Property(2, "def", (810,600), 20, 1), Property(3, "Лападунди", (720,600), 30, 1),
+            Canteen(4, "Стол", (640,600)), Property(5, "Фитнес33", (570,600), 60, 1),
+            BusProperty(6, "Христо Ботев", (480,600), 200, 9), Property(7, "Joystation", (390,600), 100, 2),
+            Chance(8, "Карта пробвай се!", (300,600)), Property(9, "KFC", (220,600), 120, 2),
+            Property(10, "def", (140,600), 20, 1), GoToJail(11, "Усмири се", (30,600)),
+            #2
+            Property(12, "Тмаркет", (30,500), 140, 3), BusProperty(13, "Зимен дворец", (30,420), 200, 9),
+            Property(14, "Сими теви", (30,340), 160, 3), Property(15, "Петлето", (30,260), 180, 4),
+            Property(16, "Donnas", (30,180), 200, 4), Nothing(17, "Почивка", (30,100), "Имаш ден без притеснения! Отпусни се"),
+            #3
+            Canteen(18, "Стол", (130,80)), Property(19, "GyroLand", (220,80), 220, 5),
+            Property(20, "def", (310,80), 20, 1), Property(21, "Исос", (390,80), 240, 5),
+            BusProperty(22, "Детски дом", (480,80), 200, 9), Property(23, "Малинова долина", (560,80), 260, 6),
+            UNSS(24, "УНСС", (650,80)), Property(25, "Илюжън", (730,80), 280, 6), 
+            Chance(26, "Карта пробвай се!", (810,80)), Property(27, "def", (900,80), 20, 1),
+            Nothing(28, "Наблюдавайте лудите", (1010, 80), "Този път не сте сред тях"), Property(29, "Клуб 33", (1010,190), 300, 7),
+            #4
+            Property(30, "def", (1010,270), 20, 1), Property(31, "Плаза", (1010,350), 320, 7),
+            BusProperty(32, "Детски ясли", (1010,430), 200, 9), Property(33, "Дианабад", (1010,510), 350, 8)
         ] 
 
     def get_pos_from_indx(self, indx):
@@ -38,14 +73,14 @@ class Board:
         old_pos_indx = player.get_pos_indx()
         new_pos_indx = (old_pos_indx + steps) % FIELD_COUNT
         player.move(self.fields[new_pos_indx], screen, game)
-        if new_pos_indx < old_pos_indx:
-            player.get_money(GO_MONEY)
+        if new_pos_indx < old_pos_indx and new_pos_indx != 0:
+            player.recieve_money(screen, game, GO_MONEY)
     
     def get_field_from_indx(self, indx):
         return self.fields[indx]
-    
+
     def go_to_jail(self, player, screen, game):
-        self.move(player, 0, screen, JAIL_INDX)
+        player.move(self.fields[JAIL_INDX], screen, game)
         player.go_to_jail()
 
     def get_next_bus_field(self, indx):

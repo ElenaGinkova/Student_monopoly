@@ -49,19 +49,23 @@ class Property(Field):
     
     def unmortage(self):
         self.mortage = False
-#
+
+#color group count
     def rent(self, screen, game):
         if self.mortaged:
             display_message(screen, game.font, 300, 100, "Тази собственост е ипотекирана! Бесплатен престой!")
             return 0
-        base_rent = self.price // 10  # 10%
-        if not self.houses and not self.hotel:
-            return base_rent  # Default rent
-        elif self.houses > 0:
-            return base_rent * (2 ** self.houses)  # increase rent 2x
+        
+        base_rent = self.price // 10  # base rent = 10%.pr
+        if len(self.houses) > 0:
+            base_rent = base_rent * (2 ** self.houses)  # increase rent 2x
         elif self.hotel:
-            return base_rent * (20 ** self.hotel)  # increase 20x
+            base_rent = base_rent * (20 ** self.hotel)  # increase 20x
+
+        if game.get_player().has_color_group(self.color_group):
+            base_rent *= 2
         return base_rent
+            
     
     def change_owner(self, owner):
         self.owner = owner
@@ -75,7 +79,7 @@ class Property(Field):
         return self.house_price * 5
 
     def handle_build_house(self, screen, game):
-        if self.houses < 4 and not self.hotel:
+        if len(self.houses) < 4 and not self.hotel:
             mess = "Искате ли да построите къща?"
             dec = decision_menu(screen, mess, [["Да", (300, 370), (150, 50)], ["Не", (500, 370), (150, 50)]], game)
             if dec == "Да":
@@ -129,7 +133,7 @@ class Property(Field):
         auction_price = 1
         active_players = game.get_players().copy()
         active_players.remove(game.get_player())
-        
+        last_bidder = None
         while len(active_players) > 1:
             buttons = [["Залагам", (300, 370), (150, 50)], ["Пас", (500, 370), (150, 50)]]
             last_bidder = None
@@ -156,30 +160,30 @@ class Property(Field):
                 pg.time.wait(2000)
                 if len(active_players) == 1: break
 
-            if len(active_players) == 1 and last_bidder != active_players[0]:
-                # If only one player remains, let them place a final bid
-                final_player = active_players[0]
-                final_bid_mess = f"{final_player.name}, искате ли да купите за ${auction_price}?"
-                final_decision = decision_menu(screen, final_bid_mess, [["Да", (300, 370), (150, 50)], ["Не", (500, 370), (150, 50)]], game)
-                if final_decision == "Да":
-                    last_bidder = final_player  # They bid at the current auction price
-                else:
-                    active_players.remove(final_player)  # No one wins
-                        
-            if last_bidder:
-                winner_message = f"{active_players[0].name} купи {self.get_name()} за {auction_price}."
-                original_price = self.price
-                self.price = auction_price
-                active_players[0].buy_property(self, screen, game)
-                self.price = original_price
-                visualise(screen, game)
-                display_message(screen, game.font, 500, 40, winner_message)
+        if len(active_players) == 1 and last_bidder == None:
+            # If only one player remains, let them place a final bid
+            final_player = active_players[0]
+            final_bid_mess = f"{final_player.name}, искате ли да купите за ${auction_price}?"
+            final_decision = decision_menu(screen, final_bid_mess, [["Да", (300, 370), (150, 50)], ["Не", (500, 370), (150, 50)]], game)
+            if final_decision == "Да":
+                last_bidder = final_player  # They bid at the current auction price
             else:
-                message = f"Никой не победи в търга за {self.name}! Собствеността остава за никого."
-                visualise(screen, game)
-                display_message(screen, game.font, 500, 40, message)
-            pg.display.update()
-            pg.time.wait(4000)
+                active_players.remove(final_player)  # No one wins
+                    
+        if last_bidder:
+            winner_message = f"{active_players[0].name} купи {self.get_name()} за {auction_price}."
+            original_price = self.price
+            self.price = auction_price
+            active_players[0].buy_property(self, screen, game)
+            self.price = original_price
+            visualise(screen, game)
+            display_message(screen, game.font, 500, 40, winner_message)
+        else:
+            message = f"{self.name} остава за никого."
+            visualise(screen, game)
+            display_message(screen, game.font, 500, 40, message)
+        pg.display.update()
+        pg.time.wait(4000)
     
     #to implement
     def handle_unmortage(self, screen, game):

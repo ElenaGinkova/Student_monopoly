@@ -8,5 +8,5 @@ class Nothing(Field):
         super().__init__(indx, name, position)
         self.text = text
 
-    def action(self, game):
+    def action(self, screen, game):
         decision_menu(game.screen, self.text, [["Добре", (300, 370), (150, 50)]], game)

@@ -248,6 +248,7 @@ class Game:
         for button in self.buttons:
             button.draw(self.screen)
 
+    #to do
     def execute_action(self, button_text):
         pass
         # if button_text == "Roll Dice":
@@ -264,45 +265,53 @@ class Game:
                 self.execute_action(button.text)
 
     #add mortage/unmortage button as option 
-    def take_turn(self, indx):
+    def take_turn(self, player):
         self.dice = Dice()
         self.dice.vis_dices(self.screen)
-        self.player = self.players[indx]
+        self.player = player
         rolling_doubles = 0 
         in_jail = self.player.is_in_jail
+
         #we need end of turn 
         while True:
             visualise(self.screen, self)
             self.dice.vis_dices(self.screen)
             pg.display.flip()
+            if self.player.get_cooldown():
+                decision_menu(self.screen, "Ден за почивка!", [["Ехх", (300, 370), (150, 50)]], self)
+                self.player.reduce_cooldown()
+                return
             # 1) ROLL -> add rolling button or mortage/unmortage/trade buttons and decision while roll then continue
             dice1, dice2 = self.dice.roll(self.screen)
             total = dice1 + dice2
             if in_jail:
-                self.handle_jail(self.player, dice1, dice2, self.screen)
-                return 
+                free = self.handle_jail(self.player, dice1, dice2, self.screen)
+                if not free:
+                    return
             # 2) MOVE
             self.board.move(self.player, total, self.screen, self)      
             # 3) GET FIELD
             curr_field_indx = self.player.get_pos_indx()
             curr_field = self.board.get_field_from_indx(curr_field_indx)
-            # 4) FIELD ACTION
-            curr_field.action(self.screen, self)
             # 5) CHECK FOR DOUBLES
+            again = False
             if dice1 == dice2:
+                again = True
                 rolling_doubles += 1
                 display_message(self.screen, self.font,500,50,"Хвърлихте чифт!")
                 if rolling_doubles == 3:
-                    display_message(self.screen, self.font,500,50,"Три пъти! Жълта книжка!")
-                    self.board.go_to_jail(self.player, self.screen)
+                    decision_menu(self.screen, "Три пъти чифт! Жълта книжка!", [["Ехх", (300, 370), (150, 50)]], self)
+                    self.board.GoToJail(self.player, self.screen, self)
                     return  # End turn after going to jail
-                else:
-                    continue
-            else:
-                break  # End turn if no doubles
-
+            # 4) FIELD ACTION
+            curr_field.action(self.screen, self)
+            # 6) -> add rolling button or mortage/unmortage/trade buttons and decision while roll then continue
             #self.handle_clicks(event)
+            # 6.1) has_diploms - more rolls
+            if not again: break
+            
   
+    
     def play(self):
         self.pl_count = self.choose_count()
         names = self.get_names()
@@ -311,11 +320,24 @@ class Game:
         self.background = pg.image.load('Monopoly/assets/BoardUNI.png')
         self.background = pg.transform.smoothscale(self.background, (1100, 600) )
         self.populate_buttons()
-
+        
         #need quit button then - in menu or sth
         while True:
-            for turn in range(len(self.players)):
-                self.take_turn(turn)
+            for player in self.players:
+                self.take_turn(player)
+
+                if len(self.players) == 1:
+                    decision_menu(self.screen, f"Победител! {self.players[0].get_name()}", [["Йее", (300, 370), (150, 50)]], self)
+                    dec = decision_menu(self.screen, "Играй отново?", [["Да", (300, 370), (150, 50)], ["Не", (500, 370), (150, 50)]], self)
+                    if dec == "Да":
+                        self.play()
+                    else:
+                        pg.quit()
+                        sys.exit()
+
+        
+            
+                 
     
     #to do
     def create_menu(self):
@@ -325,10 +347,27 @@ class Game:
         pass
 
     def handle_jail(self, player, dice1, dice2, screen):
-        pass
+        if dice1 == dice2:
+            decision_menu(self.screen, "Хвърлихте чифт! Свободни като птичка!", [["Летим", (300, 370), (150, 50)]], self) 
+            player.free_from_jail()
+            return True
+        if player.has_out_of_jail_card():
+            dec = decision_menu(self.screen, "Имате карта за освобождаване. Искате лида я ползвате?", [["Да", (300, 370), (150, 50)], ["Не", (450, 370), (150, 50)]], self)
+            if dec == "Да":
+                player.free_from_jail()
+                decision_menu(self.screen, "Вече не сте сред хората с жълтии книжки!", ["Супер", (300, 370), (150, 50)], self)
+                return True
+        if player.jail_days == 3:
+            decision_menu(self.screen, "Това беше последният ден на лудост!", [["Добре", (300, 370), (150, 50)]], self) 
+            player.free_from_jail()
+            return False
+        decision_menu(self.screen, f"Още {3 - player.jail_days} дни на лудост!", [["Добре", (300, 370), (150, 50)]], self) 
+        return False
 
 
-# move(self, field, screen, game):
     def go_to_jail(self):
         decision_menu(self.screen, "Връчена ви е жълта книжка!", [["Добре", (300, 370), (150, 50)]], self) 
         self.board.go_to_jail(self.player, self.screen, self)
+
+    def eliminate(self, player):
+        self.players.remove(player)
