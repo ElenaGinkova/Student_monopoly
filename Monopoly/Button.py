@@ -82,7 +82,7 @@ def display_message(screen, font, x, y, txt):
 
 def visualise(screen, game):
     game.draw_background()
-    game.dice.vis_dices(screen)
+    #game.dice.vis_dices(screen)
     font = pg.font.Font(None, 32)
     for p in game.get_players():
         p.draw(screen)

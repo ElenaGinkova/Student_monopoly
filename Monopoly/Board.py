@@ -13,6 +13,7 @@ from FieldTypes.Bus_property import BusProperty
 from FieldTypes.Radio import Radio
 from FieldTypes.Erasm import Erasm
 from FieldTypes.Exe import Exe
+from FieldTypes.Exam import Exam
 import sys
 
 
@@ -58,13 +59,13 @@ class Board:
             Property(16, "Donnas", (30,180), 200, 4), Nothing(17, "Почивка", (30,100), "Имаш ден без притеснения! Отпусни се"),
             #3
             Canteen(18, "Стол", (130,80)), Property(19, "GyroLand", (220,80), 220, 5),
-            Property(20, "def", (310,80), 20, 1), Property(21, "Исос", (390,80), 240, 5),
+            Exam(20, "Изпит", (310,80)), Property(21, "Исос", (390,80), 240, 5),
             BusProperty(22, "Детски дом", (480,80), 200, 9), Property(23, "Малинова долина", (560,80), 260, 6),
             UNSS(24, "УНСС", (650,80)), Property(25, "Илюжън", (730,80), 280, 6), 
             Chance(26, "Карта пробвай се!", (810,80)), Erasm(27, "Еразъм!", (900,80)),
             Nothing(28, "Наблюдавайте лудите", (1010, 80), "Този път не сте сред тях"), Property(29, "Клуб 33", (1010,190), 300, 7),
             #4
-            Property(30, "def", (1010,270), 20, 1), Property(31, "Плаза", (1010,350), 320, 7),
+            Exam(30, "Изпит", (1010,270)), Property(31, "Плаза", (1010,350), 320, 7),
             BusProperty(32, "Детски ясли", (1010,430), 200, 9), Property(33, "Дианабад", (1010,510), 350, 8)
         ] 
 
@@ -131,8 +132,8 @@ class Dice:
                     pg.quit()
                     sys.exit()
                 if button.is_clicked(event):
-                    self.dice1 = random.randint(1,6)
-                    self.dice2 = random.randint(1,6)
+                    self.dice1 = 20#random.randint(1,6)
+                    self.dice2 = 0#random.randint(1,6)
                     #self.vis_dices(screen)
                     pg.display.update()
                     pg.time.wait(2000)

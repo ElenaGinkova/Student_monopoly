@@ -15,7 +15,7 @@ class Property(Field):
         self.price = price
         self.color_group = color_group
         self.mortaged = False
-        self.houses = []
+        self.houses = 0
         self.hotel = False
 
     def has_hotel(self):
