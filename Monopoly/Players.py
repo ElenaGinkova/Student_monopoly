@@ -36,8 +36,19 @@ class Player():
         self.cooldown = 0
         self.reverse_moving = False
 
-        self.mystery_shots = 0
+        self.mystery_shots = 1
+    def has_diploma(self):
+        return self.diploms
+    
+    def use_diploma(self):
+        self.diploms -= 1
 
+    def use_mystery_shot(self):
+        self.mystery_shots -= 1
+
+    def has_mystery_shots(self):
+        return self.mystery_shots != 0
+    
     def reverse_move(self):
         self.reverse_moving = not self.reverse_moving
 
@@ -106,6 +117,12 @@ class Player():
     def has_what_to_mortage(self):
         for pr in self.properties:
             if pr.can_it_be_mortaged():
+                return True
+        return False
+    
+    def has_what_to_unmortage(self):
+        for pr in self.properties:
+            if pr.is_mortage():
                 return True
         return False
     
@@ -229,7 +246,6 @@ class Player():
         game.remove_player(self)
         return False
 
-    #takes the whole screen
     def handle_mortage(self, screen, game):
         money = 0
         if self.has_what_to_mortage():
@@ -264,7 +280,44 @@ class Player():
         pg.time.wait(1000) # 1 sec
         return money
 
-    #combinate with hotel selling
+
+    def handle_unmortage(self, screen, game):
+        if self.has_what_to_unmortage():
+            visualise(screen, game)
+            #pg.draw.rect(screen, GREEN_COLOR, (150, 250, 800, 300))
+            message = f"Какво искате да ипотекирате?"
+            mortaged = [prop for prop in self.properties if prop.is_mortage()]
+            names_map = {}
+            buttons = []
+            x = 200
+            y = 300
+            for prop in mortaged:
+                if x > 800:
+                    x = 200
+                    y = 400
+                buttons.append([prop.get_name(), (x, y), (150, 50)])
+                names_map[prop.get_name()] = prop
+                x += 150
+            buttons.append(["Отказ", (700, 400), (100, 50)])
+            decision = decision_menu(screen, message, buttons, game)
+            if decision == "Отказ":
+                return
+            to_unmortage = names_map[decision]
+            to_pay = to_unmortage.unmortage_price()
+            message = f"Платете {to_pay}лв.!"
+            dec = decision_menu(screen, message, [["Добре", (200, 300),(300, 50)], ["Отказ",(550, 300), (200, 50)]], game)
+            if dec == "Добре":
+                if game.get_player().pay_amount(to_pay, screen, game):
+                    dec = decision_menu(screen, "Успешно отипотекирахте", [["Добре", (200, 300),(300, 50)]], game)
+                    to_unmortage.unmortage()
+                    return
+            dec = decision_menu(screen, "Неуспешно отипотекиране", [["Добре", (200, 300),(150, 50)]], game)
+        else:
+            message = f"Нямате какво да ипотекирате!"
+            display_message(screen, game.font, 500, 40, message)
+        pg.display.update()
+        pg.time.wait(1000) # 1 sec
+
     def handle_sell_house(self, screen, game):
         money = 0
         if self.has_houses():
@@ -359,7 +412,7 @@ class Player():
         while raised < amount:
             visualise(screen, game)
             message = f"Събрани {raised} от {amount} нужни"
-            buttons = [["Съберете още", (300, 300),(100, 50)],  ["Отказ",(400, 300), (100, 50)]]
+            buttons = [["Съберете още", (200, 300),(150, 50)],  ["Отказ",(450, 300), (150, 50)]]
             dec = decision_menu(screen, message, buttons, game)
             if dec == "Съберете още":
                 raised += self.try_to_raise_money(amount, screen, game)

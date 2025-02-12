@@ -24,6 +24,12 @@ class Property(Field):
     def has_houses(self):
         return self.houses
     
+    def unmortage_price(self):
+        return self.price // 2 + self.price // 2 * 0.1
+    
+    def unmortage(self):
+        self.mortage = False
+        
     #donte need
     def get_house_count(self):
         return self.houses

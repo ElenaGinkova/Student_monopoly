@@ -111,6 +111,7 @@ class Dice:
     def __init__(self):
         self.dice1 = 1
         self.dice2 = 1
+        self.button = Button(text = "Хвърли заровете", position = (1200, 400))
 
     def vis_dices(self, screen):
         dice1_im = pg.image.load(DICE_PATHS[self.dice1 - 1])
@@ -122,17 +123,16 @@ class Dice:
 
     def roll(self, screen):
         font = pg.font.Font(None, 32)
-        button = Button(text = "Хвърли заровете", position = (1200, 400))
         while True:
             display_message(screen, font, 500, 40, "ДЕЙСТВИЕ: ХВЪРЛИ ЗАРОВЕТЕ")
-            button.draw(screen)
+            self.button.draw(screen)
             self.vis_dices(screen)
             pg.display.flip()
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     pg.quit()
                     sys.exit()
-                if button.is_clicked(event):
+                if self.button.is_clicked(event):
                     self.dice1 = random.randint(1,6)
                     self.dice2 = random.randint(1,6)
                     #self.vis_dices(screen)

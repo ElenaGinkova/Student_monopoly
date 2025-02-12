@@ -263,10 +263,16 @@ class Game:
         #     pass
             #self.end_turn()
 
-    def handle_clicks(self, event):
-        for button in self.buttons:
-            if button.is_clicked(event):
-                self.execute_action(button.text)
+    def handle_clicks(self, buttons):
+        while True:
+            event = pg.event.wait()
+            if event.type == pg.QUIT:
+                pg.quit()
+                exit()
+            if event.type == pg.MOUSEBUTTONDOWN:
+                for button in buttons:
+                    if button.is_clicked(event):
+                        return event, button
 
     #add mortage/unmortage button as option 
     def take_turn(self, player):
@@ -274,7 +280,6 @@ class Game:
         #self.dice.vis_dices(self.screen)
         self.player = player
         rolling_doubles = 0 
-
         #we need end of turn 
         while True:
             visualise(self.screen, self)
@@ -287,6 +292,7 @@ class Game:
             # 1) ROLL -> add rolling button or mortage/unmortage/trade buttons and decision while roll then continue
             dice1, dice2 = self.dice.roll(self.screen)
             total = dice1 + dice2
+
             if player.is_in_jail:
                 free = self.handle_jail(self.player, dice1, dice2, self.screen)
                 if not free:
@@ -310,12 +316,63 @@ class Game:
                     return  # End turn after going to jail
             # 4) FIELD ACTION
             curr_field.action(self.screen, self)
-            # 6) -> add rolling button or mortage/unmortage/trade buttons and decision while roll then continue
-            #self.handle_clicks(event)
-            # 6.1) has_diploms - more rolls
-            if not again: break
-            
-  
+            if not again:  
+                again = self.handle_menu()
+                if not again: break
+
+    def handle_mystery_shot(self):
+        #visualise(self.screen, self)
+        buttons = []
+        players = self.get_players().copy()
+        players.remove(self.get_player())
+        x = 200
+        y = 300
+        pl_map = {}
+        for pl in players:
+            pl_map[pl.get_name()] = pl
+            buttons.append([pl.get_name(), (x, y), (200, 50)])
+            x += 250
+            if x >= 900:
+                y += 100
+                x = 200
+        buttons.append(["Отказ", (x, y), (200, 50)])
+        dec = decision_menu(self.screen, "Изберете играч", buttons, self)
+        if dec == "Отказ":
+            return
+        else:
+            decision_menu(self.screen, f"{dec} загуби 10 живот", [["Добре", (200, 300), (200, 50)]] , self)
+            pl_map[dec].change_life(-10, self)
+            self.get_player().use_mystery_shot()
+
+    def handle_diploma(self):
+        if self.get_player().has_diploma():
+            dec = decision_menu(self.screen, "Искате ли да използвате диплома?", [["Да", (200, 370), (150, 50)], ["Не", (400, 370), (150, 50)]], self)
+            if dec == "Да":
+                dec = decision_menu(self.screen, "Още един ход!", [["Добре", (200, 370), (150, 50)]], self)
+                self.take_turn(self.get_player())
+        else:
+            display_message(self.screen, self.font,500,50,"Нямате налични дипломи!")
+            pg.display.update()
+            pg.time.wait(1000)
+
+    def handle_menu(self):
+        dec = decision_menu(self.screen, "Изберете какво да правите", [["Mystery shot", (200, 250), (150, 50)], ["Ползвай диплома", (400, 250), (150, 50)], ["Отипотекирай", (600, 250), (150, 50)], ["Ипотекирай", (800, 250), (150, 50)],["Край на хода", (700, 400), (150, 50)]], self)
+        if dec == "Mystery shot":
+            if self.get_player().has_mystery_shots():
+                self.handle_mystery_shot()
+            else:
+                display_message(self.screen, self.font,500,50,"Нямате Mystery shot!")
+                pg.display.update()
+                pg.time.wait(1000)
+        elif dec == "Ползвай диплома":
+            self.handle_diploma()
+        elif dec == "Отипотекирай":
+            self.get_player().handle_unmortage(self.screen, self)
+        elif dec == "Ипотекирай":
+            self.get_player().handle_mortage(self.screen, self)
+        elif dec == "Край на хода":
+            return False
+        return self.handle_menu()
     
     def play(self):
         self.pl_count = self.choose_count()
