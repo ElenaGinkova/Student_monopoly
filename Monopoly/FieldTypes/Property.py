@@ -157,7 +157,6 @@ class Property(Field):
                     pass_message = f"{player.name} пасува."
                     display_message(screen, game.font, 500, 40, pass_message)
                 pg.display.update()
-                pg.time.wait(2000)
                 if len(active_players) == 1: break
 
         if len(active_players) == 1 and last_bidder == None:
@@ -183,7 +182,7 @@ class Property(Field):
             visualise(screen, game)
             display_message(screen, game.font, 500, 40, message)
         pg.display.update()
-        pg.time.wait(4000)
+        pg.time.wait(1000)
     
     #to implement
     def handle_unmortage(self, screen, game):
@@ -202,7 +201,7 @@ class Property(Field):
         visualise(screen, game)
         if not self.owner:
             '''option 1'''
-            message = f"{game.get_player().name}, искате ли да купите {self.name} за {self.price}лв.?"
+            message = f"{game.get_player().name}, искате ли да купите \"{self.name}\" за {self.price}лв.?"
             yes_or_no = decision_menu(screen, message, [["Да", (300, 300),(100, 50)], ["Не",(450, 300), (100, 50)]], game)
             if yes_or_no == "Да":
                 success = game.get_player().buy_property(self, screen, game)
@@ -214,12 +213,12 @@ class Property(Field):
         elif self.owner == game.get_player():
             '''option 2 -> Player owns this property, allow property management'''
             if self.mortaged:
-                message = f"{self.owner.get_name()} ипотекирана собственост!"
+                message = f"\"{self.owner.get_name()}\" ипотекирана собственост!"
                 display_message(screen, game.font, 500, 40, message)
                 pg.display.update()
                 self.handle_unmortage(screen, game)
             else:
-                message = f"{game.get_player().name}, притежавате {self.name}. Искате ли да строите?"
+                message = f"{game.get_player().name}, притежавате \"{self.name}\". Искате ли да строите?"
                 dec = decision_menu(screen, message, [["Да", (200, 300),(100, 50)], ["Не", (350, 300),(100, 50)]], game)
                 if dec == "Да":
                     self.handle_build_house(screen, game)

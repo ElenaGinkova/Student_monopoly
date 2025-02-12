@@ -4,7 +4,7 @@ import sys
 
 
 LIFE = 100
-MONEY = 3000
+MONEY = 100
 FIELD_COUNT = 34
 GO_MONEY = 200
 SPRITE_SCALE = (80, 130) # Resize all sprites to 100x100
@@ -85,7 +85,7 @@ class Player():
     
     def recieve_money(self, screen, game, money):
         visualise(screen, game)
-        message = f"{self.name} получи {money}!"
+        message = f"{self.name} получи {money}лв.!"
         self.money += money
         display_message(screen, game.font, 500, 40, message)
         pg.display.update()
@@ -245,7 +245,7 @@ class Player():
                 if x > 800:
                     x = 200
                     y = 400
-                buttons.append([prop.get_name(), (x, y), (100, 50)])
+                buttons.append([prop.get_name(), (x, y), (150, 50)])
                 names_map[prop.name] = prop
                 x += 150
             buttons.append(["Отказ", (700, 400), (100, 50)])
@@ -254,12 +254,14 @@ class Player():
                 return False
             to_mortage = names_map[decision]
             money = to_mortage.get_mortage_money()
+            message = f"Получихте {money}лв.!"
+            display_message(screen, game.font, 500, 40, message)
             self.money += money
         else:
             message = f"Нямате какво да ипотекирате!"
             display_message(screen, game.font, 500, 40, message)
         pg.display.update()
-        pg.time.wait(2000) # 2 sec
+        pg.time.wait(1000) # 1 sec
         return money
 
     #combinate with hotel selling
