@@ -8,7 +8,8 @@ from Characters.Roommate import Roommate
 from Characters.TicketChecker import TicketChecker
 from Characters.NightLife import NightLife
 from collections import OrderedDict
-from Button import Button, display_message, visualise, decision_menu
+from Button import Button
+from Visualisations import display_message, visualise, decision_menu
 from Board import Dice, Board
 import random
 

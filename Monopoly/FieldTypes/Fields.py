@@ -1,7 +1,7 @@
 import random
 import pygame as pg
 from Button import Button
-from Button import display_message, ok_button, decision_menu, visualise
+from Visualisations import display_message, ok_button, decision_menu, visualise
 import sys
 
 

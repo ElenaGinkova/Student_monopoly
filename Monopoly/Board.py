@@ -1,6 +1,7 @@
 import random
 import pygame as pg
-from Button import Button,display_message
+from Button import Button
+from Visualisations import display_message
 from FieldTypes.Property import Property
 from FieldTypes.Chance import Chance
 from FieldTypes.Go_to_jail import GoToJail
