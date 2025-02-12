@@ -49,7 +49,7 @@ class Board:
             #1
             Go(0, "GO", (1000, 600)), December8(1, "8 декември", (900,600)),
             Radio(2, "Студентско радио", (810,600)), Property(3, "Лападунди", (720,600), 30, 1),
-            Canteen(4, "Стол", (640,600)), Property(5, "Фитнес33", (570,600), 60, 1),
+            Canteen(4, "Стол", (640,600)), Property(5, "Фитнес33", (560,600), 60, 1),
             BusProperty(6, "Христо Ботев", (480,600), 200, 9), Property(7, "Joystation", (390,600), 100, 2),
             Chance(8, "Карта пробвай се!", (300,600)), Property(9, "KFC", (220,600), 120, 2),
             Exe(10, "Exe", (140,600)), GoToJail(11, "Усмири се", (30,600)),
@@ -132,8 +132,8 @@ class Dice:
                     pg.quit()
                     sys.exit()
                 if button.is_clicked(event):
-                    self.dice1 = 20#random.randint(1,6)
-                    self.dice2 = 0#random.randint(1,6)
+                    self.dice1 = random.randint(1,6)
+                    self.dice2 = random.randint(1,6)
                     #self.vis_dices(screen)
                     pg.display.update()
                     pg.time.wait(2000)

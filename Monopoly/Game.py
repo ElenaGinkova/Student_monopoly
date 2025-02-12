@@ -290,6 +290,8 @@ class Game:
                 free = self.handle_jail(self.player, dice1, dice2, self.screen)
                 if not free:
                     return
+                else:
+                    continue
             # 2) MOVE
             self.board.move(self.player, total, self.screen, self)      
             # 3) GET FIELD
@@ -336,6 +338,7 @@ class Game:
                     decision_menu(self.screen, f"Победител! {self.players[0].get_name()}", [["Йее", (300, 370), (150, 50)]], self)
                     dec = decision_menu(self.screen, "Играй отново?", [["Да", (300, 370), (150, 50)], ["Не", (500, 370), (150, 50)]], self)
                     if dec == "Да":
+                        self.players.clear()
                         self.play()
                     else:
                         pg.quit()
@@ -367,9 +370,9 @@ class Game:
             decision_menu(self.screen, "Това беше последният ден на лудост!", [["Добре", (300, 370), (150, 50)]], self) 
             player.free_from_jail()
             return False
-        decision_menu(self.screen, f"Още {3 - player.jail_days} дни на лудост!", [["Добре", (300, 370), (150, 50)]], self) 
+        player.day_in_jail()
+        decision_menu(self.screen, f"Още {3 - player.jail_days} дни на лудост!", [["Добре", (300, 370), (150, 50)]], self)
         return False
-
 
     def go_to_jail(self):
         decision_menu(self.screen, "Връчена ви е жълта книжка!", [["Добре", (300, 370), (150, 50)]], self) 

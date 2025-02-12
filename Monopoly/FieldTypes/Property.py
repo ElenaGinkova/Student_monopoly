@@ -22,26 +22,27 @@ class Property(Field):
         return self.hotel
     
     def has_houses(self):
-        return len(self.houses)
+        return self.houses
     
+    #donte need
     def get_house_count(self):
-        return len(self.houses)
+        return self.houses
     
     def get_house_money(self):
-        self.houses.pop()
+        self.houses -= 1
         return self.house_price // 2 # 50%
     
     def can_it_be_mortaged(self):
         return not self.mortaged and not self.has_hotel() and not self.has_houses()
     
     def is_mortage(self):
-        return self.mortage
+        return self.mortaged
     
     def mortage_reward(self):
         return self.price / 2
     
     def get_mortage_money(self):
-        self.mortage = True
+        self.mortaged = True
         return self.mortage_reward()
     
     def unmortage_price(self):
@@ -57,7 +58,7 @@ class Property(Field):
             return 0
         
         base_rent = self.price // 10  # base rent = 10%.pr
-        if len(self.houses) > 0:
+        if self.houses > 0:
             base_rent = base_rent * (2 ** self.houses)  # increase rent 2x
         elif self.hotel:
             base_rent = base_rent * (20 ** self.hotel)  # increase 20x
@@ -65,7 +66,6 @@ class Property(Field):
         if game.get_player().has_color_group(self.color_group):
             base_rent *= 2
         return base_rent
-            
     
     def change_owner(self, owner):
         self.owner = owner
@@ -79,14 +79,14 @@ class Property(Field):
         return self.house_price * 5
 
     def handle_build_house(self, screen, game):
-        if len(self.houses) < 4 and not self.hotel:
+        if self.houses < 4 and not self.hotel:
             mess = "Искате ли да построите къща?"
             dec = decision_menu(screen, mess, [["Да", (300, 370), (150, 50)], ["Не", (500, 370), (150, 50)]], game)
             if dec == "Да":
                 paid = game.get_player().pay_amount(self.house_price, screen, game)
                 if paid:
                     self.houses += 1
-                    mess = f"Построи къща на {self.name}. Нов наем: ${self.rent}"
+                    mess = f"Построи къща на {self.name}. Нов наем: ${self.rent(screen, game)}"
                     display_message(screen, game.font, 500, 40, mess)
                 else:
                     mess = f"Не можа да построи къща!"
@@ -102,7 +102,7 @@ class Property(Field):
                 if paid:
                     self.hotel = True
                     self.houses = 0
-                    mess = f"Построи хотел на {self.name}. Нов наем: ${self.rent}"
+                    mess = f"Построи хотел на {self.name}. Нов наем: ${self.rent(screen, game)}"
                     display_message(screen, game.font, 500, 40, mess)
                 else:
                     mess = f"Не можа да построи хотел!"
@@ -227,7 +227,7 @@ class Property(Field):
             '''option 3 -> Property is owned by someone else, pay rent'''
             if self.mortaged:
                 message = f"{self.owner.get_name()} е ипотекирана собственост! Безплатен престой!"
-                display_message(screen, game.font, 500, 40, message)
+                decision_menu(screen, message, [["ОК", (300, 300),(100, 50)]], game)
             else:
                 rent = self.rent(screen, game)
                 if game.effect:

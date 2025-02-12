@@ -2,11 +2,12 @@ import pygame as pg
 import sys
 
 
-BACKGROUND = pg.image.load('Monopoly/assets/BoardUNI.png')
+BACKGROUND = pg.image.load("Monopoly/assets/BoardUNI.png")
 BACKGROUND = pg.transform.smoothscale(BACKGROUND, (1100, 600) )
 SCREEN_COLOR = (30, 30, 30)
 GREEN_COLOR = (100, 140, 100)
-
+HOUSE_IMAGE = pg.image.load("Monopoly/assets/house.png")
+HOTEL_IMAGE = pg.image.load("Monopoly/assets/hotel.png")
 
 class Button:
     def __init__(self, text=None, image_path=None, position=(0, 0), size=(150, 50), color=(0, 128, 255)):
@@ -82,7 +83,7 @@ def display_message(screen, font, x, y, txt):
 
 def visualise(screen, game):
     game.draw_background()
-    #game.dice.vis_dices(screen)
+    game.dice.vis_dices(screen)
     font = pg.font.Font(None, 32)
     for p in game.get_players():
         p.draw(screen)
@@ -90,14 +91,19 @@ def visualise(screen, game):
     display_message(screen, font,1200, 40, f"Джобни: {game.get_player().get_money()}")
     display_message(screen, font,1200, 60, f"Живот: {game.get_player().get_life()}")
     game.get_player().display_image(screen, (1110, 80))
+    visualise_houses_and_hotels(game)
     properties = game.get_player().get_properties()
     display_message(screen, font, 1200, 80, f"Собствености: ")
     y = 100
     for p in properties:
-        display_message(screen, font, 1220, y, p.get_name())
+        mess = f"{p.get_name()}"
+        if p.is_mortage():
+            mess = mess + " (М)"
+        display_message(screen, font, 1220, y, mess)
         y += 20
     for button in game.get_buttons():
         button.draw(screen)
+    
 
 def decision_menu(screen, message, buttons_info, game):
     buttons = [Button(text=option[0], position=option[1], size=option[2]) for option in buttons_info]
@@ -117,5 +123,27 @@ def decision_menu(screen, message, buttons_info, game):
                     if button.is_clicked(event):
                         return button.text 
         
-
-  
+def visualise_houses_and_hotels(game):
+    players = game.get_players()
+    for pl in players:
+        props = pl.get_properties()
+        for pr in props:
+            for i in range(0, pr.get_house_count()):
+                indx = pr.get_indx()
+                x, y = pr.get_position()
+                if indx <= 10:
+                    x -= 10
+                    y -= 40 
+                    y += i * 10
+                elif indx > 10 and indx <= 16:
+                    x += 100
+                    y += 15
+                    y += i * 10
+                elif indx > 16 and indx <= 27:
+                    x += i * 10
+                    x -= 10
+                    y += 120
+                else: 
+                    x -= 75
+                    y += i * 10
+                game.screen.blit(HOUSE_IMAGE, (x, y))
