@@ -1,6 +1,6 @@
 import pygame as pg
 from Button import Button
-
+import sys
 
 BACKGROUND = pg.image.load("Monopoly/assets/BoardUNI.png")
 BACKGROUND = pg.transform.smoothscale(BACKGROUND, (1100, 600) )

@@ -51,36 +51,3 @@ class Menu:
                 # Ако менюто е затворено, проверяваме дали е кликната иконата
                 if self.icon_button.is_clicked(event):
                     self.expanded = True
-
-
-
-
-# -------------------------------
-# Примерна callback функция за опциите
-# -------------------------------
-def option_callback(option):
-    print(f"Избрана опция: {option}")
- 
-def main():
-    pg.init()
-    screen = pg.display.set_mode((800, 600))
-    pg.display.set_caption("Меню с иконка и разширени опции")
-    clock = pg.time.Clock()
-
-    running = True
-    while running:
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                running = False
-            menu.handle_event(event)
-
-        screen.fill((0, 100, 0))
-        menu.draw(screen)
-
-        pg.display.flip()
-        clock.tick(60)
-
-    pg.quit()
-
-if __name__ == "__main__":
-    main()
