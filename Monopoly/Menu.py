@@ -17,37 +17,30 @@ class Menu:
 
         self.x = x
         self.y = y
-        self.icon_button = icon_button      # Иконата, показвана когато менюто е затворено
-        self.option_buttons = option_buttons  # Опциите, показвани когато менюто е отворено
+        self.icon_button = icon_button       
+        self.option_buttons = option_buttons   
         self.expanded_rect = pg.Rect(x, y, expanded_size[0], expanded_size[1])
-        self.expanded = False  # Начално състояние – менюто е затворено
+        self.expanded = False  
 
     def draw(self, screen):
         if self.expanded:
-            # Рисуваме фон за разширеното меню (по желание)
             pg.draw.rect(screen, (220, 220, 220), self.expanded_rect)
-            # Рисуваме бутоните за опциите
             for button in self.option_buttons:
                 button.draw(screen)
         else:
-            # Рисуваме само иконата
             self.icon_button.draw(screen)
 
     def handle_event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
             if self.expanded:
-                # Ако менюто е разширено, проверяваме дали сме кликнали върху някой от бутоните
                 for button in self.option_buttons:
                     if button.is_clicked(event):
-                        # Ако бутонът има зададена callback функция, я извикваме
                         if hasattr(button, 'callback') and callable(button.callback):
                             button.callback()
-                        self.expanded = False  # Затваряме менюто след избор на опция
+                        self.expanded = False
                         return
-                # Ако кликнем извън разширеното меню, го затваряме
                 if not self.expanded_rect.collidepoint(event.pos):
                     self.expanded = False
             else:
-                # Ако менюто е затворено, проверяваме дали е кликната иконата
                 if self.icon_button.is_clicked(event):
                     self.expanded = True
