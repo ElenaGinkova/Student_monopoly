@@ -136,6 +136,5 @@ class Dice:
                     self.dice2 = random.randint(1,6)
                     #self.vis_dices(screen)
                     pg.display.update()
-                    pg.time.wait(2000)
                     return self.dice1, self.dice2
                 

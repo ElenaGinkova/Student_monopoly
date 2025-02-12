@@ -86,7 +86,7 @@ class Property(Field):
                 paid = game.get_player().pay_amount(self.house_price, screen, game)
                 if paid:
                     self.houses += 1
-                    mess = f"Построи къща на {self.name}. Нов наем: ${self.rent(screen, game)}"
+                    mess = f"Построи къща на {self.name}. Нов наем: {self.rent(screen, game)}лв."
                     display_message(screen, game.font, 500, 40, mess)
                 else:
                     mess = f"Не можа да построи къща!"
@@ -102,7 +102,7 @@ class Property(Field):
                 if paid:
                     self.hotel = True
                     self.houses = 0
-                    mess = f"Построи хотел на {self.name}. Нов наем: ${self.rent(screen, game)}"
+                    mess = f"Построи хотел на {self.name}. Нов наем: {self.rent(screen, game)}лв."
                     display_message(screen, game.font, 500, 40, mess)
                 else:
                     mess = f"Не можа да построи хотел!"
@@ -124,7 +124,7 @@ class Property(Field):
         return self.price
     
     def __repr__(self):
-        return f"{self.name} ({self.field_type}) на {self.position} - наем: ${self.rent}"
+        return f"{self.name} ({self.field_type}) на {self.position} - наем: {self.rent}лв."
     
     def auction(self, screen, game):
         visualise(screen, game)
@@ -139,14 +139,14 @@ class Property(Field):
             last_bidder = None
             # Process bid or pass
             for player in list(active_players):
-                curr_bid_mess = f"Залог: ${auction_price} за {self.get_name()}"
-                pl_mess = f"{curr_bid_mess}. {player.name} + $10 залагате ли?"
+                curr_bid_mess = f"Залог: {auction_price}лв. за {self.get_name()}"
+                pl_mess = f"{curr_bid_mess}. {player.name} + 10лв. залагате ли?"
                 decision = decision_menu(screen, pl_mess, buttons, game)
                 if decision == "Залагам":
                     if player.can_pay(auction_price + 10):
                         auction_price += 10
                         last_bidder = player
-                        bid_message = f"{player.name} заложи ${auction_price}."
+                        bid_message = f"{player.name} заложи {auction_price}лв."
                         display_message(screen, game.font, 500, 40, bid_message)
                     else:
                         bid2_message = f"{player.name} не може да залагате толкова високо! Дисквалифициран!"
@@ -163,7 +163,7 @@ class Property(Field):
         if len(active_players) == 1 and last_bidder == None:
             # If only one player remains, let them place a final bid
             final_player = active_players[0]
-            final_bid_mess = f"{final_player.name}, искате ли да купите за ${auction_price}?"
+            final_bid_mess = f"{final_player.name}, искате ли да купите за {auction_price}лв.?"
             final_decision = decision_menu(screen, final_bid_mess, [["Да", (300, 370), (150, 50)], ["Не", (500, 370), (150, 50)]], game)
             if final_decision == "Да":
                 last_bidder = final_player  # They bid at the current auction price
@@ -202,7 +202,7 @@ class Property(Field):
         visualise(screen, game)
         if not self.owner:
             '''option 1'''
-            message = f"{game.get_player().name}, искате ли да купите {self.name} за ${self.price}?"
+            message = f"{game.get_player().name}, искате ли да купите {self.name} за {self.price}лв.?"
             yes_or_no = decision_menu(screen, message, [["Да", (300, 300),(100, 50)], ["Не",(450, 300), (100, 50)]], game)
             if yes_or_no == "Да":
                 success = game.get_player().buy_property(self, screen, game)
@@ -234,6 +234,6 @@ class Property(Field):
                     rent = self.handle_effect(rent, game)
                 if rent == 0: return
                 pg.display.update()
-                message = f"{game.get_player().name}, трябва да платите ${rent} на {self.owner.get_name()}!"
+                message = f"{game.get_player().name}, трябва да платите {rent}лв. на {self.owner.get_name()}!"
                 yes_or_no = decision_menu(screen, message, [["ОК", (300, 300),(100, 50)]], game)
                 game.get_player().needs_to_pay(rent, screen, game, self.owner) 

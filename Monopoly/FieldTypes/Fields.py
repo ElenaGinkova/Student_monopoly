@@ -31,9 +31,9 @@ def Sanction(Field):
         self.sanction = sanction
     
     def __repr__(self):
-        return f"{self.name} ({self.field_type}) на {self.position} - санцкия: ${self.sanction}"
+        return f"{self.name} ({self.field_type}) на {self.position} - санцкия: {self.sanction}лв."
     
     def action(self, screen, game):
-        message = f"{game.get_player().name}, трябва да платите санкция ${self.sanction}?"
+        message = f"{game.get_player().name}, трябва да платите санкция {self.sanction}лв.?"
         ok_button(message, screen, game)
         game.get_player().pay_amount(self.sanction, screen, game)
