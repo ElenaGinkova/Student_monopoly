@@ -128,9 +128,22 @@ def visualise_houses_and_hotels(game):
     for pl in players:
         props = pl.get_properties()
         for pr in props:
+            x, y = pr.get_position()
+            indx = pr.get_indx()
+            if pr.has_hotel():
+                if indx <= 10:
+                    y -= 60
+                elif indx > 10 and indx <= 16:
+                    x += 100
+                    y += 15
+                elif indx > 16 and indx <= 27:
+                    x -= 10
+                    y += 125
+                else: 
+                    x -= 75
+                    y -= 10
+                game.screen.blit(HOTEL_IMAGE, (x, y))
             for i in range(0, pr.get_house_count()):
-                indx = pr.get_indx()
-                x, y = pr.get_position()
                 if indx <= 10:
                     x -= 10
                     y -= 40 
@@ -140,9 +153,9 @@ def visualise_houses_and_hotels(game):
                     y += 15
                     y += i * 10
                 elif indx > 16 and indx <= 27:
-                    x += i * 10
                     x -= 10
                     y += 120
+                    x += i * 10
                 else: 
                     x -= 75
                     y += i * 10
