@@ -14,8 +14,8 @@ BACKGROUND = pg.image.load('Monopoly/assets/BoardUNI.png')
 BACKGROUND = pg.transform.smoothscale(BACKGROUND, (1100, 600) )
 COLOR_GROUP_COUNT = [2,2,2,2,2,2,2,1,4]
 
-class Player():
 
+class Player():
     def __init__(self, name, image_p):
         self.name = name
         self.image_p = image_p
@@ -35,10 +35,68 @@ class Player():
         self.diploms = 0#UNSS
         self.cooldown = 0
         self.reverse_moving = False
+        self.mystery_shots = 0
+        
+    def get_cooldown(self):
+        return self.cooldown
+    
+    def get_name(self):
+        return self.name
+    
+    def get_money(self):
+        return self.money
+    
+    def get_properties(self):
+        return self.properties
+    
+    def get_life(self):
+        return self.life
+    
+    def get_propertries_count(self):
+        house_count = 0
+        hotel_count = 0
+        for pr in self.properties:
+            house_count += pr.get_house_count()
+            if pr.has_hotel():
+                hotel_count += 1
+        return house_count, hotel_count
+    
+    def get_pos_indx(self):
+        return self.pos_indx
 
-        self.mystery_shots = 1
     def has_diploma(self):
         return self.diploms
+    
+    def has_mystery_shots(self):
+        return self.mystery_shots != 0
+    
+    def has_color_group(self, group_i):
+        count = self.count_color_group(group_i)
+        return count == COLOR_GROUP_COUNT[group_i - 1]
+    
+    def has_diploms(self):
+        return self.diploms
+
+    def has_what_to_mortage(self):
+        for pr in self.properties:
+            if pr.can_it_be_mortaged():
+                return True
+        return False
+    
+    def has_what_to_unmortage(self):
+        for pr in self.properties:
+            if pr.is_mortage():
+                return True
+        return False
+
+    def has_houses(self):
+        for pr in self.properties:
+            if pr.has_houses():
+                return True
+        return False
+
+    def has_out_of_jail_card(self):
+        return self.out_of_jail_card
     
     def use_diploma(self):
         self.diploms -= 1
@@ -46,9 +104,6 @@ class Player():
     def use_mystery_shot(self):
         self.mystery_shots -= 1
 
-    def has_mystery_shots(self):
-        return self.mystery_shots != 0
-    
     def reverse_move(self):
         self.reverse_moving = not self.reverse_moving
 
@@ -59,15 +114,8 @@ class Player():
                 count += 1
         return count
     
-    def has_color_group(self, group_i):
-        count = self.count_color_group(group_i)
-        return count == COLOR_GROUP_COUNT[group_i - 1]
-
     def cool_down(self):
         self.cooldown = 2
-    
-    def get_cooldown(self):
-        return self.cooldown
     
     def reduce_cooldown(self):
         self.cooldown -= 1
@@ -85,15 +133,6 @@ class Player():
         self.active = False
         game.eliminate(self)
 
-    def get_name(self):
-        return self.name
-    
-    def get_money(self):
-        return self.money
-    
-    def get_properties(self):
-        return self.properties
-    
     def recieve_money(self, screen, game, money):
         visualise(screen, game)
         message = f"{self.name} получи {money}лв.!"
@@ -102,55 +141,14 @@ class Player():
         pg.display.update()
         pg.time.wait(2000)
 
-    def recieve_diploma(self):
-        self.diploms += 1
-    
-    def has_diploms(self):
-        return self.diploms
-    
-    def get_life(self):
-        return self.life
-    
     def can_pay(self, amount):
         return self.money >= amount
     
-    def has_what_to_mortage(self):
-        for pr in self.properties:
-            if pr.can_it_be_mortaged():
-                return True
-        return False
-    
-    def has_what_to_unmortage(self):
-        for pr in self.properties:
-            if pr.is_mortage():
-                return True
-        return False
-    
-    def has_houses(self):
-        for pr in self.properties:
-            if pr.has_houses():
-                return True
-        return False
-    
-    def get_propertries_count(self):
-        house_count = 0
-        hotel_count = 0
-        for pr in self.properties:
-            house_count += pr.get_house_count()
-            if pr.has_hotel():
-                hotel_count += 1
-        return house_count, hotel_count
+    def recieve_diploma(self):
+        self.diploms += 1
     
     def add_out_of_j_card(self):
         self.out_of_jail_card += 1
-
-    def has_out_of_jail_card(self):
-        return self.out_of_jail_card
-    
-    def move(self, field, screen, game):
-        self.position = field.get_position()
-        self.pos_indx = field.get_indx()
-        visualise(screen, game)
 
     @property
     def is_in_jail(self):
@@ -167,10 +165,12 @@ class Player():
         self.jail_days += 1
         if self.jail_days == 3:
             self.jail = False
-        
-    def get_pos_indx(self):
-        return self.pos_indx
-    
+
+    def move(self, field, screen, game):
+        self.position = field.get_position()
+        self.pos_indx = field.get_indx()
+        visualise(screen, game)
+
     def draw(self, screen):
         rect = self.image.get_rect()
         rect.topleft = self.position
@@ -194,9 +194,6 @@ class Player():
         back_rect = rect.inflate(10, 10)  # Increase width and height
         pg.draw.rect(screen, (200, 200, 200), back_rect, border_radius = 20)
         screen.blit(image, rect)
-
-    def excexute_field(self):
-        pass
 
     def buy_property(self, property, screen, game):
         if self.money >= property.get_price():
@@ -223,7 +220,75 @@ class Player():
         elif dec == "Не купувайте":
             return False
         return False  # Default return if no valid action is taken
+    
+    def try_to_raise_money(self, amount, screen, game):
+        raised = 0
+        while self.money < amount:
+            message = f"{self.name}, как искате да съберете пари?"
+            decision = decision_menu(screen, message, [["Ипотекиране на собственост", (200, 300),(300, 50)], ["Продаване на къща",(550, 300), (200, 50)], ["Отказ",(800, 300), (100, 50)]], game)
+            #("Trade with Player", (600, 590), (200, 50)) -> to add
+            #sell hotel
+            if decision == "Отказ":
+                break
+            elif decision == "Ипотекиране на собственост":
+                raised += self.handle_mortage(screen, game)
+            else:
+                raised += self.handle_sell_house(screen, game)
+           # elif decision == "Declare Bankruptcy":#or when we catn pay???? in the prev func
+             #   pass#bankrupcy = true
+        return raised
+    
+    def needs_to_pay(self, amount, screen, game, creditor=None):
+        if self.money >= amount:
+            self.money -= amount
+            if creditor:
+                creditor.recieve_money(screen, game, amount)
+            return True
+        raised = self.try_to_raise_money(amount, screen, game)
+        visualise(screen, game)
+        message = f"Събрани {raised} от {amount} нужни"
+        display_message(screen, game.font, 500, 40, message)
+        while raised + self.money < amount:
+            visualise(screen, game)
+            message = f"Налични {raised + self.money} от {amount} нужни"
+            buttons = [["Съберете още", (300, 300),(150, 50)],  ["Банкрутирайте",(500, 300), (150, 50)]]
+            dec = decision_menu(screen, message, buttons, game)
+            if dec == "Съберете още":
+                raised += self.try_to_raise_money(amount, screen, game)
+            elif dec == "Банкрутирайте":
+                self.declare_bankruptcy(screen, game, creditor)
+                return False
+        #success
+        self.money -= amount
+        if creditor:
+            creditor.recieve_money(screen, game, amount)
+        message = f"Честито! Събрахте {raised} от {amount} нужни"
+        display_message(screen, game.font, 500, 40, message)
+        pg.display.update()
+        pg.time.wait(2000)
+        return True
+    
+    #only in some functions go bankrupt so we wont offer here
+    def pay_amount(self, amount, screen, game):
+        if self.money >= amount:
+            self.money -= amount
+            return True
+        raised = self.try_to_raise_money(amount, screen, game)
 
+        visualise(screen, game)
+        message = f"Събрани {raised} от {amount} нужни"
+        display_message(screen, game.font, 500, 40, message)
+
+        while raised < amount:
+            visualise(screen, game)
+            message = f"Събрани {raised} от {amount} нужни"
+            buttons = [["Съберете още", (200, 300),(150, 50)],  ["Отказ",(450, 300), (150, 50)]]
+            dec = decision_menu(screen, message, buttons, game)
+            if dec == "Съберете още":
+                raised += self.try_to_raise_money(amount, screen, game)
+            elif dec == "Отказ":
+                return False
+        return True
     #to to 
     def declare_bankruptcy(self, screen, game, creditor=None):
         if creditor:
@@ -279,7 +344,6 @@ class Player():
         pg.display.update()
         pg.time.wait(1000) # 1 sec
         return money
-
 
     def handle_unmortage(self, screen, game):
         if self.has_what_to_unmortage():
@@ -350,75 +414,6 @@ class Player():
         pg.display.update()
         pg.time.wait(2000) # 2 sec
         return money
-
-    def try_to_raise_money(self, amount, screen, game):
-        raised = 0
-        while self.money < amount:
-            message = f"{self.name}, как искате да съберете пари?"
-            decision = decision_menu(screen, message, [["Ипотекиране на собственост", (200, 300),(300, 50)], ["Продаване на къща",(550, 300), (200, 50)], ["Отказ",(800, 300), (100, 50)]], game)
-            #("Trade with Player", (600, 590), (200, 50)) -> to add
-            #sell hotel
-            if decision == "Отказ":
-                break
-            elif decision == "Ипотекиране на собственост":
-                raised += self.handle_mortage(screen, game)
-            else:
-                raised += self.handle_sell_house(screen, game)
-           # elif decision == "Declare Bankruptcy":#or when we catn pay???? in the prev func
-             #   pass#bankrupcy = true
-        return raised
-    
-    def needs_to_pay(self, amount, screen, game, creditor=None):
-        if self.money >= amount:
-            self.money -= amount
-            if creditor:
-                creditor.recieve_money(screen, game, amount)
-            return True
-        raised = self.try_to_raise_money(amount, screen, game)
-        visualise(screen, game)
-        message = f"Събрани {raised} от {amount} нужни"
-        display_message(screen, game.font, 500, 40, message)
-        while raised + self.money < amount:
-            visualise(screen, game)
-            message = f"Налични {raised + self.money} от {amount} нужни"
-            buttons = [["Съберете още", (300, 300),(150, 50)],  ["Банкрутирайте",(500, 300), (150, 50)]]
-            dec = decision_menu(screen, message, buttons, game)
-            if dec == "Съберете още":
-                raised += self.try_to_raise_money(amount, screen, game)
-            elif dec == "Банкрутирайте":
-                self.declare_bankruptcy(screen, game, creditor)
-                return False
-        #success
-        self.money -= amount
-        if creditor:
-            creditor.recieve_money(screen, game, amount)
-        message = f"Честито! Събрахте {raised} от {amount} нужни"
-        display_message(screen, game.font, 500, 40, message)
-        pg.display.update()
-        pg.time.wait(2000)
-        return True
-    
-    #only in some functions go bankrupt so we wont offer here
-    def pay_amount(self, amount, screen, game):
-        if self.money >= amount:
-            self.money -= amount
-            return True
-        raised = self.try_to_raise_money(amount, screen, game)
-
-        visualise(screen, game)
-        message = f"Събрани {raised} от {amount} нужни"
-        display_message(screen, game.font, 500, 40, message)
-
-        while raised < amount:
-            visualise(screen, game)
-            message = f"Събрани {raised} от {amount} нужни"
-            buttons = [["Съберете още", (200, 300),(150, 50)],  ["Отказ",(450, 300), (150, 50)]]
-            dec = decision_menu(screen, message, buttons, game)
-            if dec == "Съберете още":
-                raised += self.try_to_raise_money(amount, screen, game)
-            elif dec == "Отказ":
-                return False
-        return True
     
     def gain_property(self, property):
         self.properties.append(property)

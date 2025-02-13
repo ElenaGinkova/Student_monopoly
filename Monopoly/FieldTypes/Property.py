@@ -5,8 +5,6 @@ from Visualisations import display_message, ok_button, decision_menu, visualise
 from FieldTypes.Fields import Field
 import sys
 
-TYPE_LIST = ["Property", "Sanction"] # str repr
-
 
 class Property(Field):
     def __init__(self, indx, name, position, price, color_group, owner = None):
@@ -24,13 +22,24 @@ class Property(Field):
     def has_houses(self):
         return self.houses
     
+    @property
+    def house_price(self):
+        return self.price // 2  # House price 50% of value
+    
+    @property
+    def hotel_price(self):
+        return self.house_price * 5
+    
+    @property
+    def field_type(self):
+        return TYPE_LIST[0]
+    
     def unmortage_price(self):
         return self.price // 2 + self.price // 2 * 0.1
     
-    def unmortage(self):
-        self.mortage = False
-        
-    #donte need
+    def get_price(self):
+        return self.price
+
     def get_house_count(self):
         return self.houses
     
@@ -57,7 +66,6 @@ class Property(Field):
     def unmortage(self):
         self.mortage = False
 
-#color group count
     def rent(self, screen, game):
         if self.mortaged:
             display_message(screen, game.font, 300, 100, "Тази собственост е ипотекирана! Бесплатен престой!")
@@ -75,14 +83,6 @@ class Property(Field):
     
     def change_owner(self, owner):
         self.owner = owner
-
-    @property
-    def house_price(self):
-        return self.price // 2  # House price 50% of value
-    
-    @property
-    def hotel_price(self):
-        return self.house_price * 5
 
     def handle_build_house(self, screen, game):
         if self.houses < 4 and not self.hotel:
@@ -122,13 +122,6 @@ class Property(Field):
         pg.display.update()
         pg.time.wait(2000)
     
-    @property
-    def field_type(self):
-        return TYPE_LIST[0]
-    
-    def get_price(self):
-        return self.price
-    
     def __repr__(self):
         return f"{self.name} ({self.field_type}) на {self.position} - наем: {self.rent}лв."
     
@@ -141,7 +134,7 @@ class Property(Field):
         active_players.remove(game.get_player())
         last_bidder = None
         while len(active_players) > 1:
-            buttons = [["Залагам", (300, 370), (150, 50)], ["Пас", (500, 370), (150, 50)]]
+            buttons = [["Залагам", (300, 300), (150, 50)], ["Пас", (500, 300), (150, 50)]]
             last_bidder = None
             # Process bid or pass
             for player in list(active_players):
@@ -169,7 +162,7 @@ class Property(Field):
             # If only one player remains, let them place a final bid
             final_player = active_players[0]
             final_bid_mess = f"{final_player.name}, искате ли да купите за {auction_price}лв.?"
-            final_decision = decision_menu(screen, final_bid_mess, [["Да", (300, 370), (150, 50)], ["Не", (500, 370), (150, 50)]], game)
+            final_decision = decision_menu(screen, final_bid_mess, [["Да", (300, 300), (150, 50)], ["Не", (500, 300), (150, 50)]], game)
             if final_decision == "Да":
                 last_bidder = final_player  # They bid at the current auction price
             else:
@@ -190,7 +183,6 @@ class Property(Field):
         pg.display.update()
         pg.time.wait(1000)
     
-    #to implement
     def handle_unmortage(self, screen, game):
         pass
 

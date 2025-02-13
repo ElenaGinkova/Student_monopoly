@@ -13,6 +13,7 @@ from Visualisations import display_message, visualise, decision_menu
 from Board import Dice, Board
 import random
 
+
 SCREEN_DIMENSIONS = (1400, 700)
 SCREEN_COLOR = (30, 30, 30)
 SPRITE_SCALE = (100, 100)
@@ -21,6 +22,7 @@ COLOR_INACTIVE = pg.Color("lightskyblue")
 COLOR_ACTIVE = pg.Color("dodgerblue")
 clock = pg.time.Clock()
 JAIL_INDX = 1000, 200
+
 
 #do not put everything in self and in the class...
 #maybe gameprep class and other for gameplay
@@ -44,12 +46,12 @@ class Game:
 
     def get_players(self):
         return self.players
-        
-    def remove_player(self, player):
-        self.players.remove(player)
-
+    
     def get_player(self):
         return self.player
+    
+    def remove_player(self, player):
+        self.players.remove(player)
     
     def get_buttons(self):
         return self.buttons
@@ -356,7 +358,7 @@ class Game:
             pg.time.wait(1000)
 
     def handle_menu(self):
-        dec = decision_menu(self.screen, "Изберете какво да правите", [["Mystery shot", (200, 250), (150, 50)], ["Ползвай диплома", (400, 250), (150, 50)], ["Отипотекирай", (600, 250), (150, 50)], ["Ипотекирай", (800, 250), (150, 50)],["Край на хода", (700, 400), (150, 50)]], self)
+        dec = decision_menu(self.screen, "Изберете какво да правите", [["Mystery shot", (200, 300), (150, 50)], ["Ползвай диплома", (400, 300), (150, 50)], ["Отипотекирай", (600, 300), (150, 50)], ["Ипотекирай", (800, 300), (150, 50)],["Край на хода", (700, 400), (150, 50)]], self)
         if dec == "Mystery shot":
             if self.get_player().has_mystery_shots():
                 self.handle_mystery_shot()
@@ -373,7 +375,33 @@ class Game:
         elif dec == "Край на хода":
             return False
         return self.handle_menu()
-    
+
+    def handle_jail(self, player, dice1, dice2, screen):
+        if dice1 == dice2:
+            decision_menu(self.screen, "Хвърлихте чифт! Свободни като птичка!", [["Летим", (300, 370), (150, 50)]], self) 
+            player.free_from_jail()
+            return True
+        if player.has_out_of_jail_card():
+            dec = decision_menu(self.screen, "Имате карта за освобождаване. Искате лида я ползвате?", [["Да", (300, 370), (150, 50)], ["Не", (450, 370), (150, 50)]], self)
+            if dec == "Да":
+                player.free_from_jail()
+                decision_menu(self.screen, "Вече не сте сред хората с жълтии книжки!", ["Супер", (300, 370), (150, 50)], self)
+                return True
+        if player.jail_days == 3:
+            decision_menu(self.screen, "Това беше последният ден на лудост!", [["Добре", (300, 370), (150, 50)]], self) 
+            player.free_from_jail()
+            return False
+        player.day_in_jail()
+        decision_menu(self.screen, f"Още {3 - player.jail_days} дни на лудост!", [["Добре", (300, 370), (150, 50)]], self)
+        return False
+
+    def go_to_jail(self):
+        decision_menu(self.screen, "Връчена ви е жълта книжка!", [["Добре", (300, 370), (150, 50)]], self) 
+        self.board.go_to_jail(self.player, self.screen, self)
+
+    def eliminate(self, player):
+        self.players.remove(player)
+
     def play(self):
         self.pl_count = self.choose_count()
         names = self.get_names()
@@ -401,40 +429,3 @@ class Game:
                     else:
                         pg.quit()
                         sys.exit()
-
-        
-            
-                 
-    
-    #to do
-    def create_menu(self):
-        self.buttons = []#roll, quit, ...   
-    
-    def animate_movement(self, player, total_roll, screen):
-        pass
-
-    def handle_jail(self, player, dice1, dice2, screen):
-        if dice1 == dice2:
-            decision_menu(self.screen, "Хвърлихте чифт! Свободни като птичка!", [["Летим", (300, 370), (150, 50)]], self) 
-            player.free_from_jail()
-            return True
-        if player.has_out_of_jail_card():
-            dec = decision_menu(self.screen, "Имате карта за освобождаване. Искате лида я ползвате?", [["Да", (300, 370), (150, 50)], ["Не", (450, 370), (150, 50)]], self)
-            if dec == "Да":
-                player.free_from_jail()
-                decision_menu(self.screen, "Вече не сте сред хората с жълтии книжки!", ["Супер", (300, 370), (150, 50)], self)
-                return True
-        if player.jail_days == 3:
-            decision_menu(self.screen, "Това беше последният ден на лудост!", [["Добре", (300, 370), (150, 50)]], self) 
-            player.free_from_jail()
-            return False
-        player.day_in_jail()
-        decision_menu(self.screen, f"Още {3 - player.jail_days} дни на лудост!", [["Добре", (300, 370), (150, 50)]], self)
-        return False
-
-    def go_to_jail(self):
-        decision_menu(self.screen, "Връчена ви е жълта книжка!", [["Добре", (300, 370), (150, 50)]], self) 
-        self.board.go_to_jail(self.player, self.screen, self)
-
-    def eliminate(self, player):
-        self.players.remove(player)
