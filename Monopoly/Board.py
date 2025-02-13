@@ -108,18 +108,20 @@ class Board:
         
 #чифтове също трябва да се отчитат        
 class Dice:    
-    def __init__(self):
+    def __init__(self, pos1 = (1200, 500), pos2 = (1300, 500), button_pos = (1200, 400)):
         self.dice1 = 1
         self.dice2 = 1
-        self.button = Button(text = "Хвърли заровете", position = (1200, 400))
+        self.pos1 = pos1
+        self.pos2 = pos2
+        self.button = Button(text = "Хвърли заровете", position = button_pos)
 
     def vis_dices(self, screen):
         dice1_im = pg.image.load(DICE_PATHS[self.dice1 - 1])
         dice2_im  = pg.image.load(DICE_PATHS[self.dice2 - 1])
         dice1_im = pg.transform.scale(dice1_im, (70, 70))
         dice2_im = pg.transform.scale(dice2_im, (70, 70))
-        screen.blit(dice1_im, (1200, 500))
-        screen.blit(dice2_im, (1300, 500))
+        screen.blit(dice1_im, self.pos1)
+        screen.blit(dice2_im, self.pos2)
 
     def roll(self, screen):
         font = pg.font.Font(None, 32)

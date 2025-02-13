@@ -11,4 +11,5 @@ pygame.quit()
 sys.exit()
 
 #public/pr
-#displ caption#screen not in self1
+#displ caption
+#screen not in self1

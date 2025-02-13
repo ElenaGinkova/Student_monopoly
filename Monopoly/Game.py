@@ -9,7 +9,7 @@ from Characters.TicketChecker import TicketChecker
 from Characters.NightLife import NightLife
 from collections import OrderedDict
 from Button import Button
-from Visualisations import display_message, visualise, decision_menu
+from Visualisations import *
 from Board import Dice, Board
 import random
 
@@ -71,30 +71,12 @@ class Game:
 
     #maybe shouldnt be stored in self but get the info and forget abt it
     #maybe in class player or idk
-    def vis_input_boxes(self):
-        for box, saved_text in self.input_boxes:
-            txt = self.font.render(saved_text, True, COLOR_ACTIVE)
-            box.w = max(200, txt.get_width() + 10)
-            self.screen.blit(txt, (box.x + 5, box.y + 5))
-            pg.draw.rect(self.screen, 100, box, 2)
 
     def get_textbox_info(self, event, indx):
         if event.key == pg.K_BACKSPACE:
             self.input_boxes[indx][1] = self.input_boxes[indx][1][:-1]
         else:
             self.input_boxes[indx][1] += event.unicode
-
-    def create_name_boxes(self, count):
-        self.input_boxes = []
-        x_coord = 100
-        y_coord = 100
-        for _ in range(0, count):
-            self.input_boxes.append([pg.Rect(x_coord, y_coord, 140, 32), ""])
-            if x_coord < 700:
-                x_coord += 300
-            else:
-                x_coord = 100
-                y_coord += 100
 
     def active_box_i(self, event):
         i = 0
@@ -114,13 +96,14 @@ class Game:
                 return False
         return True
 
+#input boxes da ne sa v self
     def get_names(self):
-        self.create_name_boxes(self.pl_count)
+        self.input_boxes = create_boxes(self.pl_count)
         active_box = None
         messege = False
         while True:
             self.screen.fill(SCREEN_COLOR)
-            self.vis_input_boxes()
+            vis_boxes(self.input_boxes, self)
             if messege:
                 display_message(self.screen, self.font, 700, 300, "Моля попълнете всички имена!")
             self.vis_button("Предай", 400, 500)
@@ -164,7 +147,7 @@ class Game:
             if not valid:
                 display_message(self.screen, self.font,400, 50,"Грешен вход!")
 
-            self.vis_input_boxes()
+            vis_boxes(self.input_boxes, self)
             self.vis_button("Нататък", 300, 300)
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -179,7 +162,6 @@ class Game:
                     self.get_textbox_info(event, 0)
     
     def visualise_selected_characters(self, images, positions, selected):
- 
         for i, img in enumerate(images):
             rect = img.get_rect(topleft=(positions[i]))
             self.screen.blit(img, rect)
@@ -246,24 +228,12 @@ class Game:
         self.player.display_image(self.screen, (1110, 200))
 
     def populate_buttons(self):
-        #self.buttons.append(Button(text = "Roll Dice", position = (1200, 400)))
         self.buttons.append(Button(text = "Buy Property", position = (20, 20)))
         self.buttons.append(Button(text = "End Turn", position = (220, 20)))
 
     def draw_buttons(self):
         for button in self.buttons:
             button.draw(self.screen)
-
-    #to do
-    def execute_action(self, button_text):
-        pass
-        # if button_text == "Roll Dice":
-        #     self.dice.roll(self.screen)
-        # elif button_text == "Buy Property":
-        #     self.buy_property()
-        # elif button_text == "End Turn":
-        #     pass
-            #self.end_turn()
 
     def handle_clicks(self, buttons):
         while True:
@@ -276,16 +246,12 @@ class Game:
                     if button.is_clicked(event):
                         return event, button
 
-    #add mortage/unmortage button as option 
     def take_turn(self, player):
         self.dice = Dice()
-        #self.dice.vis_dices(self.screen)
         self.player = player
         rolling_doubles = 0 
-        #we need end of turn 
         while True:
             visualise(self.screen, self)
-            #self.dice.vis_dices(self.screen)
             pg.display.flip()
             if self.player.get_cooldown():
                 decision_menu(self.screen, "Ден за почивка!", [["Ехх", (300, 370), (150, 50)]], self)
@@ -320,7 +286,9 @@ class Game:
             curr_field.action(self.screen, self)
             if not again:  
                 again = self.handle_menu()
-                if not again: break
+                if not again:
+                    player.reset_power()
+                    break
 
     def handle_mystery_shot(self):
         #visualise(self.screen, self)
@@ -358,7 +326,7 @@ class Game:
             pg.time.wait(1000)
 
     def handle_menu(self):
-        dec = decision_menu(self.screen, "Изберете какво да правите", [["Mystery shot", (200, 300), (150, 50)], ["Ползвай диплома", (400, 300), (150, 50)], ["Отипотекирай", (600, 300), (150, 50)], ["Ипотекирай", (800, 300), (150, 50)],["Край на хода", (700, 400), (150, 50)]], self)
+        dec = decision_menu(self.screen, "Изберете какво да правите", [["Mystery shot", (200, 300), (150, 50)], ["Ползвай диплома", (400, 300), (150, 50)], ["Отипотекирай", (600, 300), (150, 50)], [f"{self.get_player().get_power_name()}", (300, 400), (200, 50)], ["Ипотекирай", (800, 300), (150, 50)],["Край на хода", (650, 400), (150, 50)]], self)
         if dec == "Mystery shot":
             if self.get_player().has_mystery_shots():
                 self.handle_mystery_shot()
@@ -372,6 +340,8 @@ class Game:
             self.get_player().handle_unmortage(self.screen, self)
         elif dec == "Ипотекирай":
             self.get_player().handle_mortage(self.screen, self)
+        elif dec == self.get_player().get_power_name():
+            self.get_player().power(self)
         elif dec == "Край на хода":
             return False
         return self.handle_menu()

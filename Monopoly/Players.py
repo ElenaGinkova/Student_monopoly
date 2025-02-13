@@ -36,6 +36,7 @@ class Player():
         self.cooldown = 0
         self.reverse_moving = False
         self.mystery_shots = 0
+        self.used_power = False
         
     def get_cooldown(self):
         return self.cooldown
@@ -98,12 +99,21 @@ class Player():
     def has_out_of_jail_card(self):
         return self.out_of_jail_card
     
+    def has_power(self):
+        return not self.used_power
+
+    def use_power(self):
+        self.used_power = True
+    
     def use_diploma(self):
         self.diploms -= 1
 
     def use_mystery_shot(self):
         self.mystery_shots -= 1
-
+    
+    def reset_power(self):
+        self.used_power = False
+        
     def reverse_move(self):
         self.reverse_moving = not self.reverse_moving
 

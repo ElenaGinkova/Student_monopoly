@@ -2,6 +2,8 @@ import pygame as pg
 from Button import Button
 import sys
 
+
+COLOR_ACTIVE = pg.Color("dodgerblue")
 BACKGROUND = pg.image.load("Monopoly/assets/BoardUNI.png")
 BACKGROUND = pg.transform.smoothscale(BACKGROUND, (1100, 600) )
 SCREEN_COLOR = (30, 30, 30)
@@ -9,7 +11,7 @@ GREEN_COLOR = (100, 140, 100)
 HOUSE_IMAGE = pg.image.load("Monopoly/assets/house.png")
 HOTEL_IMAGE = pg.image.load("Monopoly/assets/hotel.png")
     
-
+#mai ne 
 def desicion(message, screen, game):
     buttons = [Button(text = "Yes", position = (600, 300), size = (100, 50)), Button(text = "No", position = (760, 300), size = (100, 50))]
     while True:
@@ -75,7 +77,7 @@ def decision_menu(screen, message, buttons_info, game):
     buttons = [Button(text=option[0], position=option[1], size=option[2]) for option in buttons_info]
     while True:
         visualise(screen, game)
-        pg.draw.rect(screen, GREEN_COLOR, (150, 220, 800, 300))
+        pg.draw.rect(screen, GREEN_COLOR, (140, 220, 820, 360))
         display_message(screen, pg.font.Font(None, 32), 250, 250,message)
         for button in buttons:
             button.draw(screen)
@@ -126,3 +128,51 @@ def visualise_houses_and_hotels(game):
                     x -= 75
                     y += i * 10
                 game.screen.blit(HOUSE_IMAGE, (x, y))
+
+def create_boxes(count):
+    boxes = []
+    x_coord = 100
+    y_coord = 200
+    for _ in range(0, count):
+        boxes.append([pg.Rect(x_coord, y_coord, 140, 32), ""])
+        if x_coord < 700:
+            x_coord += 300
+        else:
+            x_coord = 100
+            y_coord += 100
+    return boxes
+
+#def __init__(self, text=None, image_path=None, position=(0, 0), size=(150, 50), color=(0, 128, 255)):
+  
+def create_buttons(count, texts):
+    buttons = []
+    x_coord = 200
+    y_coord = 300
+    for i in range(0, count):
+        buttons.append([texts[i], (x_coord, y_coord), (150, 50)])
+        if x_coord < 700:
+            x_coord += 200
+        else:
+            x_coord = 200
+            y_coord += 100
+    return buttons
+
+def vis_boxes(boxes, game):
+    for box, saved_text in boxes:
+        txt = game.font.render(saved_text, True, COLOR_ACTIVE)
+        box.w = max(200, txt.get_width() + 10)
+        game.screen.blit(txt, (box.x + 5, box.y + 5))
+        pg.draw.rect(game.screen, 100, box, 2)
+
+def choose_between_players(game, mess):
+    player = game.get_player()
+    players = game.get_players().copy()
+    players.remove(player)
+    texts = []
+    pl_map = {}
+    for pl in players:
+        pl_map[pl.get_name()] = pl
+        texts.append(pl.get_name())
+    buttons = create_buttons(len(texts), texts)
+    chosen = decision_menu(game.screen, mess, buttons, game)
+    return pl_map[chosen]
