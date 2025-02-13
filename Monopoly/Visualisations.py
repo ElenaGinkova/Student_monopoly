@@ -144,9 +144,9 @@ def create_boxes(count):
     x_coord = 100
     y_coord = 200
     for _ in range(0, count):
-        boxes.append([pg.Rect(x_coord, y_coord, 140, 32), ""])
+        boxes.append([pg.Rect(x_coord, y_coord, 300, 50), "", False])
         if x_coord < 700:
-            x_coord += 300
+            x_coord += 350
         else:
             x_coord = 100
             y_coord += 100
@@ -168,11 +168,20 @@ def create_buttons(count, texts):
 
 
 def vis_boxes(boxes, game):
-    for box, saved_text in boxes:
-        txt = game.font.render(saved_text, True, COLOR_ACTIVE)
-        box.w = max(200, txt.get_width() + 10)
-        game.screen.blit(txt, (box.x + 5, box.y + 5))
-        pg.draw.rect(game.screen, 100, box, 2)
+    for i, (box, saved_text, active) in enumerate(boxes):
+        font = pg.font.Font(None, 36)
+        label_surface = font.render(f"Играч {i+1}", True, (255, 255, 255))
+        label_rect = label_surface.get_rect(center = (box.x + box.w // 2, box.y - 25))
+        game.screen.blit(label_surface, label_rect)
+
+        pg.draw.rect(game.screen, (255, 255, 255, 200), box, border_radius=10)
+
+        box_color = (0, 150, 255) if active else (200, 200, 200)
+        pg.draw.rect(game.screen, box_color, box, 3 if active else 2, border_radius=10)
+        
+        font = pg.font.Font(None, 42)
+        txt_surface = font.render(saved_text, True, (0, 0, 0))
+        game.screen.blit(txt_surface, (box.x + 15, box.y + 10))
 
 
 def choose_between_players(game, mess):

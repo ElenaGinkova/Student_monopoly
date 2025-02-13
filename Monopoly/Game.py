@@ -25,6 +25,8 @@ COLOR_INACTIVE = pg.Color("lightskyblue")
 COLOR_ACTIVE = pg.Color("dodgerblue")
 clock = pg.time.Clock()
 JAIL_INDX = 1000, 200
+BACKGROUND = pg.image.load("Monopoly/assets/background.png")
+BACKGROUND = pg.transform.scale(BACKGROUND, SCREEN_DIMENSIONS)
 
 
 #do not put everything in self and in the class...
@@ -71,11 +73,17 @@ class Game:
         active_box = None
         messege = False
         button = Button(text = "Предай", position = (400, 500))
+        panel_rect = pg.Rect(50, 50, 1400, 600)
+        font = pg.font.Font(None, 42)
+        mess_rect = pg.Rect(400, 85, 600, 60)
         while True:
-            self.screen.fill(SCREEN_COLOR)
+            self.screen.blit(BACKGROUND, (0, 0))
+            pg.draw.rect(self.screen, (25, 25, 112), panel_rect, border_radius=15)
+
             vis_boxes(input_boxes, self)
             if messege:
-                display_message(self.screen, self.font, 700, 300, "Моля попълнете всички имена!")
+                pg.draw.rect(self.screen, (70, 130, 180), mess_rect, border_radius=15)
+                display_message(self.screen, font, 450, 100, "Моля попълнете всички имена!")
             button.draw(self.screen)
             pg.display.update()
             for event in pg.event.get():
@@ -83,10 +91,10 @@ class Game:
                     pg.quit()
                     sys.exit()
                 if event.type == pg.MOUSEBUTTONDOWN:
-                    active_box = None 
-                    i = active_box_i(event, input_boxes)
-                    if i != -1:
-                        active_box = i
+                    active_box = active_box_i(event, input_boxes)
+
+                    for i in range(len(input_boxes)):
+                        input_boxes[i][2] = (i == active_box)
 
                     if button.is_clicked(event):
                         if self.are_filled(input_boxes):
@@ -97,9 +105,9 @@ class Game:
                     get_textbox_info(input_boxes, event, active_box)
                     messege = False
 
-    def is_valid_count(self, input_boxes):
+    def is_valid_count(self, input_box):
         try:
-            number = int(input_boxes[0][1])
+            number = int(input_box[1])
             if 2 <= number <= 9:
                 return True
             else:
@@ -108,31 +116,45 @@ class Game:
             return False
 
     def choose_count(self):
-        button = Button(text = "Нататък", position=(300,300))
-        input_boxes = [[pg.Rect(100, 100, 140, 32), ""]]
+        button = Button(text="Продължи", position=(600, 400), size=(200, 50))
+        input_box = [pg.Rect(600, 300, 200, 50), "", False]
         valid = True
+        panel_rect = pg.Rect(500, 180, 400, 300)
+        mess_rect = pg.Rect(600, 85, 210, 60)
         while True:
-            self.screen.fill(SCREEN_COLOR)
-            display_message(self.screen, self.font, 60, 50, "Въведете бройка играчи[2-9]: ")
+            self.screen.blit(BACKGROUND, (0, 0))
+            pg.draw.rect(self.screen, (25, 25, 112), panel_rect, border_radius=15)
+
+            display_message(self.screen, self.font, 600, 210, "Брой играчи [2-9]:")
             
             if not valid:
-                display_message(self.screen, self.font, 400, 50, "Грешен вход!")
+                pg.draw.rect(self.screen, (25, 25, 112), mess_rect, border_radius=15)
+                display_message(self.screen, self.font, 630, 100, "Грешен вход!")
 
-            vis_boxes(input_boxes, self)
+            box_color = (50, 200, 50) if input_box[2] else (200, 200, 200)
+            pg.draw.rect(self.screen, box_color, input_box[0], border_radius=10)
+
+            font = pg.font.Font(None, 42)
+            text_surface = font.render(input_box[1], True, (0, 0, 0))
+            self.screen.blit(text_surface, (input_box[0].x + 10, input_box[0].y + 10))
             button.draw(self.screen)
             pg.display.flip()
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     pg.quit()
                     sys.exit()
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    if button.is_clicked(event):
+                        valid = self.is_valid_count(input_box)
+                        if valid:
+                            return int(input_box[1])
+                    input_box[2] = input_box[0].collidepoint(event.pos)
+                if event.type == pg.KEYDOWN and input_box[2]:  
+                    if event.key == pg.K_BACKSPACE:
+                        input_box[1] = input_box[1][:-1]
+                    elif event.unicode.isdigit():  
+                        input_box[1] += event.unicode
 
-                if button.is_clicked(event):
-                    valid = self.is_valid_count(input_boxes)
-                    if valid:
-                        return int(input_boxes[0][1])
-                    
-                if event.type == pg.KEYDOWN:
-                    get_textbox_info(input_boxes, event, 0)
 
     def renumerate(self, selected, missing):
         if missing in selected:
@@ -192,7 +214,6 @@ class Game:
                 decision_menu(self.screen, "Ден за почивка!", [["Ехх", (300, 370), (150, 50)]], self)
                 self.player.reduce_cooldown()
                 return
-           
 
             if player.is_in_jail:
                 free = self.handle_jail(self.player, self.screen)
@@ -369,17 +390,11 @@ class Game:
 def get_textbox_info(input_boxes, event, indx):
     if event.key == pg.K_BACKSPACE:
         input_boxes[indx][1] = input_boxes[indx][1][:-1]
-    else:
+    elif len(input_boxes[indx][1]) <= 10:
         input_boxes[indx][1] += event.unicode
 
 def active_box_i(event, input_boxes):
-    i = 0
-    found = False
-    for box, _ in input_boxes:
-        if box.collidepoint(event.pos):  # Check clicked box
-            found = True
-            break
-        i += 1
-    if found:
-        return i
-    return -1
+    for i, (box, _, _) in enumerate(input_boxes):
+        if box.collidepoint(event.pos):
+            return i 
+    return -1 
