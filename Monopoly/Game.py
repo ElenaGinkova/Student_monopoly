@@ -13,6 +13,7 @@ from collections import OrderedDict
 from Button import Button
 from Visualisations import *
 from Board import Dice, Board
+from Visualisations import visualise_selected_characters
 import random
 
 
@@ -41,11 +42,9 @@ class Game:
         pg.display.set_caption("Monopoly")
         self.font = pg.font.Font(None, 32)
         self.players = []
-        self.input_boxes = []
         self.buttons = []
         self.player = None
         self.board = Board()
-
         self.effect = None
         self.effect_turns_left = 0
 
@@ -61,54 +60,23 @@ class Game:
     def get_buttons(self):
         return self.buttons
     
-    def draw_background(self):
-        self.screen.fill(SCREEN_COLOR)   
-        self.screen.blit(self.background, (0, 100))
-    
-    def vis_button(self, text, x, y):
-        button = pg.Rect(x, y, 100, 40)
-        button_text = self.font.render(text, True, (255, 255, 255))
-        pg.draw.rect(self.screen, COLOR_ACTIVE, button)
-        self.screen.blit(button_text, (button.x + 10, button.y + 5))
-        self.button = button
-        pg.display.flip()
-        clock.tick(FPS)
-
-    def get_textbox_info(self, event, indx):
-        if event.key == pg.K_BACKSPACE:
-            self.input_boxes[indx][1] = self.input_boxes[indx][1][:-1]
-        else:
-            self.input_boxes[indx][1] += event.unicode
-
-    def active_box_i(self, event):
-        i = 0
-        found = False
-        for box, _ in self.input_boxes:
-            if box.collidepoint(event.pos):  # Check clicked box
-                found = True
-                break
-            i += 1
-        if found:
-            return i
-        return -1
-    
     def are_filled(self, input_boxes):
         for box in input_boxes:
             if box[1] == "":
                 return False
         return True
 
-#input boxes da ne sa v self
     def get_names(self):
-        self.input_boxes = create_boxes(self.pl_count)
+        input_boxes = create_boxes(self.pl_count)
         active_box = None
         messege = False
+        button = Button(text = "Предай", position = (400, 500))
         while True:
             self.screen.fill(SCREEN_COLOR)
-            vis_boxes(self.input_boxes, self)
+            vis_boxes(input_boxes, self)
             if messege:
                 display_message(self.screen, self.font, 700, 300, "Моля попълнете всички имена!")
-            self.vis_button("Предай", 400, 500)
+            button.draw(self.screen)
             pg.display.update()
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -116,23 +84,23 @@ class Game:
                     sys.exit()
                 if event.type == pg.MOUSEBUTTONDOWN:
                     active_box = None 
-                    i = self.active_box_i(event)
+                    i = active_box_i(event, input_boxes)
                     if i != -1:
                         active_box = i
 
-                    if self.button.collidepoint(event.pos):
-                        if self.are_filled(self.input_boxes):
-                            return self.input_boxes
+                    if button.is_clicked(event):
+                        if self.are_filled(input_boxes):
+                            return input_boxes
                         else:
                             messege = True
                 if event.type == pg.KEYDOWN and active_box is not None:
-                    self.get_textbox_info(event, active_box)
+                    get_textbox_info(input_boxes, event, active_box)
                     messege = False
 
-    def is_valid_count(self):
+    def is_valid_count(self, input_boxes):
         try:
-            number = int(self.input_boxes[0][1])
-            if 2 <= number <= 10:
+            number = int(input_boxes[0][1])
+            if 2 <= number <= 9:
                 return True
             else:
                 return False
@@ -140,37 +108,31 @@ class Game:
             return False
 
     def choose_count(self):
-        self.input_boxes = [[pg.Rect(100, 100, 140, 32), ""]]
+        button = Button(text = "Нататък", position=(300,300))
+        input_boxes = [[pg.Rect(100, 100, 140, 32), ""]]
         valid = True
         while True:
             self.screen.fill(SCREEN_COLOR)
-            display_message(self.screen, self.font, 60,50,"Въведете бройка играчи[2-10]: ")
+            display_message(self.screen, self.font, 60, 50, "Въведете бройка играчи[2-9]: ")
             
             if not valid:
-                display_message(self.screen, self.font,400, 50,"Грешен вход!")
+                display_message(self.screen, self.font, 400, 50, "Грешен вход!")
 
-            vis_boxes(self.input_boxes, self)
-            self.vis_button("Нататък", 300, 300)
+            vis_boxes(input_boxes, self)
+            button.draw(self.screen)
+            pg.display.flip()
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     pg.quit()
                     sys.exit()
-                if event.type == pg.MOUSEBUTTONDOWN and self.button.collidepoint(event.pos):
-                    valid = self.is_valid_count()
+
+                if button.is_clicked(event):
+                    valid = self.is_valid_count(input_boxes)
                     if valid:
-                        return int(self.input_boxes[0][1])
+                        return int(input_boxes[0][1])
                     
                 if event.type == pg.KEYDOWN:
-                    self.get_textbox_info(event, 0)
-    
-    def visualise_selected_characters(self, images, positions, selected):
-        for i, img in enumerate(images):
-            rect = img.get_rect(topleft=(positions[i]))
-            self.screen.blit(img, rect)
-            if i in selected:
-                pg.draw.rect(self.screen, (0, 255, 0), rect, 5) # to show that you have selected
-                text_surface = self.font.render(str(selected[i]), True, (255, 255, 255))
-                self.screen.blit(text_surface, (rect.x + rect.width - 100, rect.y - 25)) # to show the i of the player
+                    get_textbox_info(input_boxes, event, 0)
 
     def renumerate(self, selected, missing):
         if missing in selected:
@@ -200,13 +162,13 @@ class Game:
         positions = [(i * 180 + 200, 350 - images[i].get_height()) for i in range(5)] # first row
         positions.extend([(i % 5 * 180 + 200, 650 - images[i].get_height()) for i in range(5,9)]) # second row
         selected = OrderedDict() # I need the order of adding 
-
+        button = Button(text = "Играй!", position=(900,600))
         while True:
             self.screen.fill(SCREEN_COLOR)
             instructions = self.font.render("Изберете герои: {} оставащи".format(self.pl_count - len(selected)), True, (255, 255, 255))
             self.screen.blit(instructions, (50, 10))
-            self.visualise_selected_characters(images, positions, selected)
-            self.vis_button("Играй!", 900, 600)
+            visualise_selected_characters(self, images, positions, selected)
+            button.draw(self.screen)
             pg.display.flip()
 
             for event in pg.event.get():
@@ -214,7 +176,7 @@ class Game:
                     pg.quit()
                     sys.exit()
                 elif event.type == pg.MOUSEBUTTONDOWN:
-                    if self.button.collidepoint(event.pos) and len(selected) == self.pl_count:
+                    if button.is_clicked(event) and len(selected) == self.pl_count:
                         self.create_players(selected, names)
                         return
                     self.click_character(event, images, positions, selected)   
@@ -371,3 +333,22 @@ class Game:
                     else:
                         pg.quit()
                         sys.exit()
+
+
+def get_textbox_info(input_boxes, event, indx):
+    if event.key == pg.K_BACKSPACE:
+        input_boxes[indx][1] = input_boxes[indx][1][:-1]
+    else:
+        input_boxes[indx][1] += event.unicode
+
+def active_box_i(event, input_boxes):
+    i = 0
+    found = False
+    for box, _ in input_boxes:
+        if box.collidepoint(event.pos):  # Check clicked box
+            found = True
+            break
+        i += 1
+    if found:
+        return i
+    return -1

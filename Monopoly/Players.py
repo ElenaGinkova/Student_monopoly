@@ -5,6 +5,7 @@ import sys
 
 LIFE = 100
 MONEY = 100
+START_POSITION = [1000, 600]
 FIELD_COUNT = 34
 GO_MONEY = 200
 SPRITE_SCALE = (80, 130) # Resize all sprites to 100x100
@@ -23,16 +24,16 @@ class Player():
         w = self.width
         self.image = pg.transform.scale(self.image, (w, HIGTH))
         self.rect = self.image.get_rect()
-        self.position = [1000, 560] # starting position # this should be indx
+        self.position = START_POSITION # starting position
         self.money = MONEY # the starting amount of money
-        self.life = LIFE # in percents
+        self.life = LIFE
         self.properties = []
         self.pos_indx = 0
         self.jail = False
-        self.active = True#or bankrupt
+        self.active = True
         self.out_of_jail_card = 0
         self.jail_days = 0
-        self.diploms = 0#UNSS
+        self.diploms = 0
         self.cooldown = 0
         self.reverse_moving = False
         self.mystery_shots = 0
@@ -282,7 +283,6 @@ class Player():
         pg.time.wait(2000)
         return True
     
-    #only in some functions go bankrupt so we wont offer here
     def pay_amount(self, amount, screen, game):
         if self.money >= amount:
             self.money -= amount
@@ -303,7 +303,7 @@ class Player():
             elif dec == "Отказ":
                 return False
         return True
-    #to to 
+
     def declare_bankruptcy(self, screen, game, creditor=None):
         if creditor:
             message = f"{self.name} дава всичко на {creditor.get_name()}!"
@@ -362,7 +362,6 @@ class Player():
     def handle_unmortage(self, screen, game):
         if self.has_what_to_unmortage():
             visualise(screen, game)
-            #pg.draw.rect(screen, GREEN_COLOR, (150, 250, 800, 300))
             message = f"Какво искате да ипотекирате?"
             mortaged = [prop for prop in self.properties if prop.is_mortage()]
             names_map = {}
@@ -391,7 +390,7 @@ class Player():
                     return
             dec = decision_menu(screen, "Неуспешно отипотекиране", [["Добре", (200, 300),(150, 50)]], game)
         else:
-            message = f"Нямате какво да ипотекирате!"
+            message = f"Нямате какво да отипотекирате!"
             display_message(screen, game.font, 500, 40, message)
         pg.display.update()
         pg.time.wait(1000) # 1 sec

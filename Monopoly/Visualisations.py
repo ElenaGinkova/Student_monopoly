@@ -11,25 +11,6 @@ GREEN_COLOR = (100, 140, 100)
 HOUSE_IMAGE = pg.image.load("Monopoly/assets/house.png")
 HOTEL_IMAGE = pg.image.load("Monopoly/assets/hotel.png")
     
-#mai ne 
-def desicion(message, screen, game):
-    buttons = [Button(text = "Yes", position = (600, 300), size = (100, 50)), Button(text = "No", position = (760, 300), size = (100, 50))]
-    while True:
-        visualise(screen, game)
-        pg.draw.rect(screen, GREEN_COLOR, (580, 240, 370, 150))
-        display_message(screen, pg.font.Font(None, 32), 600, 250, message)
-        for button in buttons:
-            button.draw(screen)
-        pg.display.flip()
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                pg.quit()
-                sys.exit()
-            if event.type == pg.MOUSEBUTTONDOWN:
-                for button in buttons:
-                    if button.is_clicked(event):
-                        return button.text == "Yes"
-
 
 def ok_button(message, screen, game):
     button = Button(text = "OK", position = (600, 300), size = (100, 50))
@@ -54,7 +35,7 @@ def display_message(screen, font, x, y, txt):
 
 
 def visualise(screen, game):
-    game.draw_background()
+    draw_background(game)
     game.dice.vis_dices(screen)
     font = pg.font.Font(None, 32)
     for p in game.get_players():
@@ -75,6 +56,8 @@ def visualise(screen, game):
         y += 20
     for button in game.get_buttons():
         button.draw(screen)
+
+
 def decision_menu(screen, message, buttons_info, game, image_buttons=None):
     buttons = [Button(text=option[0], position=option[1], size=option[2]) for option in buttons_info]
 
@@ -200,3 +183,18 @@ def choose_between_players(game, mess):
     buttons = create_buttons(len(texts), texts)
     chosen = decision_menu(game.screen, mess, buttons, game)
     return pl_map[chosen]
+
+
+def visualise_selected_characters(game, images, positions, selected):
+    for i, img in enumerate(images):
+        rect = img.get_rect(topleft=(positions[i]))
+        game.screen.blit(img, rect)
+        if i in selected:
+            pg.draw.rect(game.screen, (0, 255, 0), rect, 5) # to show that you have selected
+            text_surface = game.font.render(str(selected[i]), True, (255, 255, 255))
+            game.screen.blit(text_surface, (rect.x + rect.width - 100, rect.y - 25)) # to show the i of the player
+
+
+def draw_background(game):
+    game.screen.fill(SCREEN_COLOR)   
+    game.screen.blit(game.background, (0, 100))
