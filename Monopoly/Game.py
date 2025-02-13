@@ -311,10 +311,10 @@ class Game:
                 return self.handle_jail(player, screen)
         elif dec == "Карта":
             if player.has_out_of_jail_card():
-                dec = decision_menu(self.screen, "Имате карта за освобождаване. Искате лида я ползвате?", [["Да", (300, 370), (150, 50)], ["Не", (450, 370), (150, 50)]], self)
+                dec = decision_menu(self.screen, "Имате карта за освобождаване. Искате лида я ползвате?", [["Да", (300, 370), (150, 50)], ["Не", (500, 370), (150, 50)]], self)
                 if dec == "Да":
                     player.free_from_jail()
-                    decision_menu(self.screen, "Вече не сте сред хората с жълтии книжки!", ["Супер", (300, 370), (150, 50)], self)
+                    decision_menu(self.screen, "Вече не сте сред хората с жълтии книжки!", [["Супер", (300, 370), (150, 50)]], self)
                     return True
                 else:
                     return self.handle_jail(player, screen)
