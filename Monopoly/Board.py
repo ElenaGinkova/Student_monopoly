@@ -19,7 +19,6 @@ import sys
 
 
 DICE_PATHS = [f"Monopoly/assets/dice/{i}.png" for i in range(1, 7)]
-TYPE_CLASS_LIST = [] # classes
 BACKGROUND = pg.image.load('Monopoly/assets/BoardUNI.png')
 BACKGROUND = pg.transform.smoothscale(BACKGROUND, (1100, 600) )
 SCREEN_COLOR = (30, 30, 30)
@@ -28,21 +27,6 @@ GO_MONEY = 200
 JAIL_INDX = 28
 
 
-#TO DO
-# -> bus_propery да насл prop ама като пита за къши да казва не а за цена спрямо бройката която притежава
-# -> стол
-# -> радио
-# -> exe
-# -> изпит
-# -> УНСС
-# -> еразъм
-
-
-# chance (self, indx, name, position):
-# go jail (self, indx, name, position):
-# go  (self, indx, name, position):
-# nothing (self, indx, name, position, text):
-# property (self, indx, name, position, price, color_group, owner = None):
 class Board:
     def __init__(self):
         self.bus_indexes = [6, 13, 22, 32]
@@ -109,7 +93,6 @@ class Board:
                 return self.fields[i]
 
         
-#чифтове също трябва да се отчитат        
 class Dice:    
     def __init__(self, pos1 = (1200, 500), pos2 = (1300, 500), button_pos = (1200, 400)):
         self.dice1 = 1
@@ -140,7 +123,6 @@ class Dice:
                 if self.button.is_clicked(event):
                     self.dice1 = random.randint(1,6)
                     self.dice2 = random.randint(1,6)
-                    #self.vis_dices(screen)
                     pg.display.update()
                     return self.dice1, self.dice2
                 

@@ -8,6 +8,7 @@ from Characters.Roommate import Roommate
 from Characters.TicketChecker import TicketChecker
 from Characters.NightLife import NightLife
 from Characters.CaffeineAddict import CaffeineAddict
+from Characters.Librarian import Librarian
 from collections import OrderedDict
 from Button import Button
 from Visualisations import *
@@ -27,9 +28,12 @@ JAIL_INDX = 1000, 200
 
 #do not put everything in self and in the class...
 #maybe gameprep class and other for gameplay
+#maybe shouldnt be stored in self but get the info and forget abt it
+#maybe in class player or idk
 class Game:
-    characters_paths = [f"Monopoly/assets/character{i}.png" for i in range(8)]#
-    characters_dict = {0 : CleaningLady, 1 : Roommate, 2 : Tutor, 3 : TicketChecker, 4 : GirlsMagnet, 5 : BookWorm, 6 : NightLife, 7 : CaffeineAddict}
+    characters_paths = [f"Monopoly/assets/character{i}.png" for i in range(9)]#
+    characters_dict = {0 : CleaningLady, 1 : Roommate, 2 : Tutor, 3 : TicketChecker,
+                       4 : GirlsMagnet, 5 : BookWorm, 6 : NightLife, 7 : CaffeineAddict, 8 : Librarian}
 
     def __init__(self):
         pg.init()
@@ -69,9 +73,6 @@ class Game:
         self.button = button
         pg.display.flip()
         clock.tick(FPS)
-
-    #maybe shouldnt be stored in self but get the info and forget abt it
-    #maybe in class player or idk
 
     def get_textbox_info(self, event, indx):
         if event.key == pg.K_BACKSPACE:
@@ -175,7 +176,7 @@ class Game:
         if missing in selected:
             del selected[missing]
 
-        for idx, key in enumerate(selected.keys(), start=1):
+        for idx, key in enumerate(selected.keys(), start = 1):
             selected[key] = idx
 
     def click_character(self, event, images, positions, selected):
@@ -197,7 +198,7 @@ class Game:
     def select_characters(self, names):
         images = [pg.image.load(path) for path in self.characters_paths]
         positions = [(i * 180 + 200, 350 - images[i].get_height()) for i in range(5)] # first row
-        positions.extend([(i % 5 * 180 + 200, 650 - images[i].get_height()) for i in range(5,8)]) # second row
+        positions.extend([(i % 5 * 180 + 200, 650 - images[i].get_height()) for i in range(5,9)]) # second row
         selected = OrderedDict() # I need the order of adding 
 
         while True:
@@ -217,35 +218,6 @@ class Game:
                         self.create_players(selected, names)
                         return
                     self.click_character(event, images, positions, selected)   
-        
-    def vis_players(self):
-        for p in self.players:
-            p.draw(self.screen)
-
-    def vis_playing(self):
-        display_message(self.screen, self.font,1200, 100, f"Playing: {self.player.get_name()}")
-        display_message(self.screen, self.font,1200, 130, f"Money: {self.player.get_money()}")
-        display_message(self.screen, self.font,1200, 160, f"Life: {self.player.get_life()}")
-        self.player.display_image(self.screen, (1110, 200))
-
-    def populate_buttons(self):
-        self.buttons.append(Button(text = "Buy Property", position = (20, 20)))
-        self.buttons.append(Button(text = "End Turn", position = (220, 20)))
-
-    def draw_buttons(self):
-        for button in self.buttons:
-            button.draw(self.screen)
-
-    def handle_clicks(self, buttons):
-        while True:
-            event = pg.event.wait()
-            if event.type == pg.QUIT:
-                pg.quit()
-                exit()
-            if event.type == pg.MOUSEBUTTONDOWN:
-                for button in buttons:
-                    if button.is_clicked(event):
-                        return event, button
 
     def take_turn(self, player):
         self.dice = Dice()
@@ -327,7 +299,7 @@ class Game:
             pg.time.wait(1000)
 
     def handle_menu(self):
-        dec = decision_menu(self.screen, "Изберете какво да правите", [["Mystery shot", (200, 300), (150, 50)], ["Ползвай диплома", (400, 300), (150, 50)], ["Отипотекирай", (600, 300), (150, 50)], [f"{self.get_player().get_power_name()}", (300, 400), (200, 50)], ["Ипотекирай", (800, 300), (150, 50)],["Край на хода", (650, 400), (150, 50)]], self)
+        dec = decision_menu(self.screen, "Изберете какво да правите", [["Mystery shot", (200, 300), (150, 50)], ["Ползвай диплома", (400, 300), (150, 50)], ["Отипотекирай", (600, 300), (150, 50)], [f"{self.get_player().get_power_name()}", (200, 400), (200, 50)], ["Ипотекирай", (800, 300), (150, 50)]], self, [Button(text = "Край на хода", image_path = "Monopoly/assets/quit.png", position = (800, 450), size = (70, 70)), Button(image_path = "Monopoly/assets/info.png", position = (700, 450), size = (70, 70))])
         if dec == "Mystery shot":
             if self.get_player().has_mystery_shots():
                 self.handle_mystery_shot()
@@ -380,7 +352,6 @@ class Game:
         self.sprites = pg.sprite.Group()
         self.background = pg.image.load('Monopoly/assets/BoardUNI.png')
         self.background = pg.transform.smoothscale(self.background, (1100, 600) )
-        self.populate_buttons()
         
         #need quit button then - in menu or sth
         while True:

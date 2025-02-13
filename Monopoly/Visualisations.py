@@ -75,17 +75,34 @@ def visualise(screen, game):
         y += 20
     for button in game.get_buttons():
         button.draw(screen)
-
-
-def decision_menu(screen, message, buttons_info, game):
+def decision_menu(screen, message, buttons_info, game, image_buttons=None):
     buttons = [Button(text=option[0], position=option[1], size=option[2]) for option in buttons_info]
+
+    if image_buttons:
+        for button in image_buttons:
+            buttons.append(button)
+
     while True:
         visualise(screen, game)
-        pg.draw.rect(screen, GREEN_COLOR, (140, 220, 820, 360))
-        display_message(screen, pg.font.Font(None, 32), 250, 250,message)
+
+        overlay = pg.Surface((screen.get_width(), screen.get_height()), pg.SRCALPHA)
+        overlay.fill((0, 0, 0, 150))
+        screen.blit(overlay, (0, 0))
+
+        panel_rect = pg.Rect(140, 220, 820, 360)
+        pg.draw.rect(screen, (50, 150, 50), panel_rect, border_radius=20) 
+        pg.draw.rect(screen, (255, 255, 255), panel_rect, 5, border_radius=20)
+
+        font = pg.font.Font(None, 40)
+        text_surface = font.render(message, True, (255, 255, 255))
+        text_rect = text_surface.get_rect(center=(panel_rect.centerx, panel_rect.top + 50))
+        screen.blit(text_surface, text_rect)
+
         for button in buttons:
             button.draw(screen)
+
         pg.display.flip()
+
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 pg.quit()
@@ -93,7 +110,7 @@ def decision_menu(screen, message, buttons_info, game):
             if event.type == pg.MOUSEBUTTONDOWN:
                 for button in buttons:
                     if button.is_clicked(event):
-                        return button.text 
+                        return button.text
 
 
 def visualise_houses_and_hotels(game):
