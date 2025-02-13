@@ -4,7 +4,7 @@ import sys
 
 
 LIFE = 100
-MONEY = 3000
+MONEY = 0
 START_POSITION = [1000, 600]
 FIELD_COUNT = 34
 GO_MONEY = 200
@@ -194,7 +194,7 @@ class Player():
                 self.reserved_field = None
                 display_message(screen, game.font, 500, 40, "Резервацията е анулирана")
                 pg.display.flip()
-                pg.time.wait(1000)
+                pg.time.wait(2000)
         self.pos_indx = next_indx
         visualise(screen, game)
 

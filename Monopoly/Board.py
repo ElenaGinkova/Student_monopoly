@@ -121,8 +121,8 @@ class Dice:
                     pg.quit()
                     sys.exit()
                 if self.button.is_clicked(event):
-                    self.dice1 = random.randint(1,6)
-                    self.dice2 = random.randint(1,6)
+                    self.dice1 = 6#random.randint(1,6)
+                    self.dice2 = 5#random.randint(1,6)
                     pg.display.update()
                     return self.dice1, self.dice2
                 
