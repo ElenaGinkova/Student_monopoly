@@ -30,10 +30,6 @@ class Property(Field):
     def hotel_price(self):
         return self.house_price * 5
     
-    @property
-    def field_type(self):
-        return TYPE_LIST[0]
-    
     def unmortage_price(self):
         return self.price // 2 + self.price // 2 * 0.1
     
