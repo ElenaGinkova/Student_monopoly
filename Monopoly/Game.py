@@ -17,7 +17,7 @@ from Visualisations import visualise_selected_characters
 import random
 
 
-SCREEN_DIMENSIONS = (1400, 700)
+SCREEN_DIMENSIONS = (1500, 700)
 SCREEN_COLOR = (30, 30, 30)
 SPRITE_SCALE = (100, 100)
 FPS = 60
@@ -261,7 +261,7 @@ class Game:
             pg.time.wait(1000)
 
     def handle_menu(self):
-        dec = decision_menu(self.screen, "Изберете какво да правите", [["Mystery shot", (200, 300), (150, 50)], ["Ползвай диплома", (400, 300), (150, 50)], ["Отипотекирай", (600, 300), (150, 50)], [f"{self.get_player().get_power_name()}", (200, 400), (200, 50)], ["Ипотекирай", (800, 300), (150, 50)]], self, [Button(text = "Край на хода", image_path = "Monopoly/assets/quit.png", position = (800, 450), size = (70, 70)), Button(image_path = "Monopoly/assets/info.png", position = (700, 450), size = (70, 70))])
+        dec = decision_menu(self.screen, "Изберете какво да правите", [["Mystery shot", (200, 300), (150, 50)], ["Ползвай диплома", (400, 300), (150, 50)], ["Отипотекирай", (600, 300), (150, 50)], [f"{self.get_player().get_power_name()}", (200, 400), (200, 50)], ["Ипотекирай", (800, 300), (150, 50)], ["Купи резерве", (450, 400), (150, 50)]], self, [Button(text = "Край на хода", image_path = "Monopoly/assets/quit.png", position = (800, 450), size = (70, 70)), Button(image_path = "Monopoly/assets/info.png", position = (700, 450), size = (70, 70))])
         if dec == "Mystery shot":
             if self.get_player().has_mystery_shots():
                 self.handle_mystery_shot()
@@ -279,6 +279,8 @@ class Game:
             self.get_player().power(self)
         elif dec == "Край на хода":
             return False
+        elif dec == "Купи резерве":
+            self.get_player().buy_reserved(self)
         return self.handle_menu()
 
     def handle_jail(self, player, dice1, dice2, screen):

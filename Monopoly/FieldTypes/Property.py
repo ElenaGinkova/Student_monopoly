@@ -10,12 +10,17 @@ class Property(Field):
     def __init__(self, indx, name, position, price, color_group, owner = None):
         super().__init__(indx, name, position)
         self.owner = owner
+        self.reserved = False
+        self.reservator = None
         self.price = price
         self.color_group = color_group
         self.mortaged = False
         self.houses = 0
         self.hotel = False
 
+    def get_name(self):
+        return self.name
+    
     def has_hotel(self):
         return self.hotel
     
@@ -191,19 +196,37 @@ class Property(Field):
         elif game.effect == "Безплатно":
             return 0
 
+    def handle_reserve(self, game):
+        player = game.get_player()
+        player.reserved_field = self
+        self.reservator = player
+        self.reserved = True
+        display_message(game.screen, game.font, 500, 40,txt = "Успешно резервирахте")
+        pg.display.flip()
+        pg.time.wait(1000)
+    
+    def free(self):
+        self.reservator = None
+        self.reserved = False
+
     def action(self, screen, game):
         visualise(screen, game)
         if not self.owner:
-            '''option 1'''
-            message = f"{game.get_player().name}, искате ли да купите \"{self.name}\" за {self.price}лв.?"
-            yes_or_no = decision_menu(screen, message, [["Да", (300, 300),(100, 50)], ["Не",(450, 300), (100, 50)]], game)
-            if yes_or_no == "Да":
-                success = game.get_player().buy_property(self, screen, game)
-                if success:
-                    self.owner = game.get_player()
-                    return
-            self.auction(screen, game)
-            #turg tuk
+            if not self.reserved or game.get_player() is self.reservator:
+                '''option 1'''
+                message = f"{game.get_player().name}, искате ли да купите \"{self.name}\" за {self.price}лв.?"
+                dec = decision_menu(screen, message, [["Да", (300, 300),(100, 50)], ["Резерве", (450, 300),(100, 50)], ["Не",(600, 300), (100, 50)]], game)
+                if dec == "Да":
+                    success = game.get_player().buy_property(self, screen, game)
+                    if success:
+                        self.owner = game.get_player()
+                        return
+                elif dec == "Резерве":
+                    self.handle_reserve(game)
+                else:
+                    self.auction(screen, game)
+            else:
+                decision_menu(game.screen, "Полето е резервирано", [["Добре", (300, 300),(100, 50)]], game)
         elif self.owner == game.get_player():
             '''option 2 -> Player owns this property, allow property management'''
             if self.mortaged:

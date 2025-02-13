@@ -41,13 +41,17 @@ def visualise(screen, game):
     for p in game.get_players():
         p.draw(screen)
     display_message(screen, font,1200, 20, f"Играч: {game.get_player().get_name()}")
-    display_message(screen, font,1200, 40, f"Джобни: {game.get_player().get_money()}")
+    display_message(screen, font,1200, 40, f"Джобни: {game.get_player().get_money()}лв.")
     display_message(screen, font,1200, 60, f"Живот: {game.get_player().get_life()}")
+    if game.get_player().get_reserve():
+        display_message(screen, font,1200, 80, f"Резерве: {game.get_player().get_reserve().get_name()}")
+    else:
+        display_message(screen, font,1200, 80, f"Резерве: ")
     game.get_player().display_image(screen, (1110, 80))
     visualise_houses_and_hotels(game)
     properties = game.get_player().get_properties()
-    display_message(screen, font, 1200, 80, f"Собствености: ")
-    y = 100
+    display_message(screen, font, 1200, 100, f"Собствености: ")
+    y = 120
     for p in properties:
         mess = f"{p.get_name()}"
         if p.is_mortage():

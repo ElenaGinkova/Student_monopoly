@@ -4,7 +4,7 @@ import sys
 
 
 LIFE = 100
-MONEY = 100
+MONEY = 3000
 START_POSITION = [1000, 600]
 FIELD_COUNT = 34
 GO_MONEY = 200
@@ -12,7 +12,7 @@ SPRITE_SCALE = (80, 130) # Resize all sprites to 100x100
 HIGTH = 100
 SCREEN_COLOR = (30, 30, 30)
 BACKGROUND = pg.image.load('Monopoly/assets/BoardUNI.png')
-BACKGROUND = pg.transform.smoothscale(BACKGROUND, (1100, 600) )
+BACKGROUND = pg.transform.smoothscale(BACKGROUND, (1100, 600))
 COLOR_GROUP_COUNT = [2,2,2,2,2,2,2,1,4]
 
 
@@ -38,6 +38,10 @@ class Player():
         self.reverse_moving = False
         self.mystery_shots = 0
         self.used_power = False
+        self.reserved_field = None# when we pass go we restart to none
+
+    def get_reserve(self):
+        return self.reserved_field
         
     def get_cooldown(self):
         return self.cooldown
@@ -183,7 +187,15 @@ class Player():
 
     def move(self, field, screen, game):
         self.position = field.get_position()
-        self.pos_indx = field.get_indx()
+        next_indx = field.get_indx()
+        if self.reserved_field:
+            if self.pos_indx > next_indx or (self.pos_indx < self.reserved_field.get_indx() and next_indx > self.reserved_field.indx):
+                self.reserved_field.free()
+                self.reserved_field = None
+                display_message(screen, game.font, 500, 40, "Резервацията е анулирана")
+                pg.display.flip()
+                pg.time.wait(1000)
+        self.pos_indx = next_indx
         visualise(screen, game)
 
     def draw(self, screen):
@@ -236,6 +248,16 @@ class Player():
             return False
         return False  # Default return if no valid action is taken
     
+    def buy_reserved(self, game):
+        if self.reserved_field:
+            if self.buy_property(self.reserved_field, game.screen, game):
+                self.reserved_field.free()
+                self.reserved_field = None
+        else:
+            display_message(game.screen, game.font, 500, 40, "Нямате резерве")
+            pg.display.flip()
+            pg.time.wait(1000)
+
     def try_to_raise_money(self, amount, screen, game):
         raised = 0
         while self.money < amount:
