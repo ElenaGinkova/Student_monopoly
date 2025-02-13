@@ -11,7 +11,6 @@ class CleaningLady(Player):
     def get_power_name(self):
         return "Премести играч"
     
-    
     def power(self, game):
         if self.has_power():
             chosen = choose_between_players(game, "Кого избирате да преместите?")

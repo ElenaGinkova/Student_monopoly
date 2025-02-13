@@ -3,19 +3,19 @@ from Visualisations import decision_menu, display_message
 import pygame as pg
 
 
-class NightLife(Player):
-    '''Can gain mystery shots'''
+class CaffeineAddict(Player):
+    '''Може да се „зареди“ с допълнителна енергия – да хвърли допълнителен зар'''
     def __init__(self, name):
-        super().__init__(name, "Monopoly/assets/character6.png")
-
+        super().__init__(name, "Monopoly/assets/character7.png")
+    
     def get_power_name(self):
-        return "Получи mystery shot"
+        return "Презареди енергия"
 
     def power(self, game):
         if self.has_power():
-            decision_menu(game.screen, "Получаваш Mystery shot за бурната вечер!", [["Добре!", (500, 300), (150, 50)]],game)
+            decision_menu(game.screen, "Пий кафе и играй пак.", [["Добре", (300, 300), (150, 50)]], game)
             self.use_power()
-            self.mystery_shots += 1
+            game.take_turn(self)
         else:
             display_message(game.screen, game.font, 500, 50, f"Изхабилите сте силата си! Още {self.power_cooldown} хода")
             pg.display.flip()

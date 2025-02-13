@@ -7,6 +7,7 @@ from Characters.CleaningLady import CleaningLady
 from Characters.Roommate import Roommate
 from Characters.TicketChecker import TicketChecker
 from Characters.NightLife import NightLife
+from Characters.CaffeineAddict import CaffeineAddict
 from collections import OrderedDict
 from Button import Button
 from Visualisations import *
@@ -27,8 +28,8 @@ JAIL_INDX = 1000, 200
 #do not put everything in self and in the class...
 #maybe gameprep class and other for gameplay
 class Game:
-    characters_paths = [f"Monopoly/assets/character{i}.png" for i in range(7)]#
-    characters_dict = {0 : CleaningLady, 1 : Roommate, 2 : Tutor, 3 : TicketChecker, 4 : GirlsMagnet, 5 : BookWorm, 6 : NightLife}
+    characters_paths = [f"Monopoly/assets/character{i}.png" for i in range(8)]#
+    characters_dict = {0 : CleaningLady, 1 : Roommate, 2 : Tutor, 3 : TicketChecker, 4 : GirlsMagnet, 5 : BookWorm, 6 : NightLife, 7 : CaffeineAddict}
 
     def __init__(self):
         pg.init()
@@ -196,7 +197,7 @@ class Game:
     def select_characters(self, names):
         images = [pg.image.load(path) for path in self.characters_paths]
         positions = [(i * 180 + 200, 350 - images[i].get_height()) for i in range(5)] # first row
-        positions.extend([(i % 5 * 180 + 200, 650 - images[i].get_height()) for i in range(5,7)]) # second row
+        positions.extend([(i % 5 * 180 + 200, 650 - images[i].get_height()) for i in range(5,8)]) # second row
         selected = OrderedDict() # I need the order of adding 
 
         while True:

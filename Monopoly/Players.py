@@ -64,7 +64,7 @@ class Player():
     
     def get_pos_indx(self):
         return self.pos_indx
-
+    
     def has_diploma(self):
         return self.diploms
     
@@ -101,9 +101,6 @@ class Player():
     
     def has_power(self):
         return not self.used_power
-
-    def use_power(self):
-        self.used_power = True
     
     def use_diploma(self):
         self.diploms -= 1
@@ -112,8 +109,15 @@ class Player():
         self.mystery_shots -= 1
     
     def reset_power(self):
-        self.used_power = False
-        
+        if self.used_power:
+            self.power_cooldown -= 1
+            if self.power_cooldown <= 0:
+                self.used_power = False
+
+    def use_power(self):
+        self.power_cooldown = 3
+        self.used_power = True
+
     def reverse_move(self):
         self.reverse_moving = not self.reverse_moving
 

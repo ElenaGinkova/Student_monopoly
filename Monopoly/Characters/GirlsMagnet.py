@@ -12,17 +12,6 @@ class GirlsMagnet(Player):
     def get_power_name(self):
         return "Разсеяй играч"
     
-    def reset_power(self):
-        if self.used_power:
-            self.power_cooldown -= 1
-            if self.power_cooldown <= 0:
-                self.used_power = False
-
-    def use_power(self):
-        self.power_cooldown = 3
-        self.used_power = True
-
-    
     def power(self, game):
         if self.has_power():
             chosen = choose_between_players(game, "Кого избирате да разсеяте за един ход?")

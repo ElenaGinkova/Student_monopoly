@@ -30,6 +30,7 @@ def desicion(message, screen, game):
                     if button.is_clicked(event):
                         return button.text == "Yes"
 
+
 def ok_button(message, screen, game):
     button = Button(text = "OK", position = (600, 300), size = (100, 50))
     while True:
@@ -45,10 +46,12 @@ def ok_button(message, screen, game):
             if event.type == pg.MOUSEBUTTONDOWN and button.is_clicked(event):
                 return
 
+
 def display_message(screen, font, x, y, txt):
         
         instruction_text = font.render(txt, True, (255, 255, 255))
         screen.blit(instruction_text, (x, y))
+
 
 def visualise(screen, game):
     game.draw_background()
@@ -73,6 +76,7 @@ def visualise(screen, game):
     for button in game.get_buttons():
         button.draw(screen)
 
+
 def decision_menu(screen, message, buttons_info, game):
     buttons = [Button(text=option[0], position=option[1], size=option[2]) for option in buttons_info]
     while True:
@@ -90,7 +94,8 @@ def decision_menu(screen, message, buttons_info, game):
                 for button in buttons:
                     if button.is_clicked(event):
                         return button.text 
-        
+
+
 def visualise_houses_and_hotels(game):
     players = game.get_players()
     for pl in players:
@@ -129,6 +134,7 @@ def visualise_houses_and_hotels(game):
                     y += i * 10
                 game.screen.blit(HOUSE_IMAGE, (x, y))
 
+
 def create_boxes(count):
     boxes = []
     x_coord = 100
@@ -142,8 +148,7 @@ def create_boxes(count):
             y_coord += 100
     return boxes
 
-#def __init__(self, text=None, image_path=None, position=(0, 0), size=(150, 50), color=(0, 128, 255)):
-  
+
 def create_buttons(count, texts):
     buttons = []
     x_coord = 200
@@ -157,12 +162,14 @@ def create_buttons(count, texts):
             y_coord += 100
     return buttons
 
+
 def vis_boxes(boxes, game):
     for box, saved_text in boxes:
         txt = game.font.render(saved_text, True, COLOR_ACTIVE)
         box.w = max(200, txt.get_width() + 10)
         game.screen.blit(txt, (box.x + 5, box.y + 5))
         pg.draw.rect(game.screen, 100, box, 2)
+
 
 def choose_between_players(game, mess):
     player = game.get_player()

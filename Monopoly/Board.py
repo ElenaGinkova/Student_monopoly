@@ -97,6 +97,9 @@ class Board:
     def go_to_jail(self, player, screen, game):
         player.move(self.fields[JAIL_INDX], screen, game)
         player.go_to_jail()
+    
+    def move_to_indx(self, player, indx, game):
+        player.move(self.fields[indx], game.screen, game)
 
     def get_next_bus_field(self, indx):
         if indx >= self.bus_indexes[3]: return self.fields[0]
