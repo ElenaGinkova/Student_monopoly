@@ -20,9 +20,12 @@ class Librarian(Player):
         if self.has_power():
             chosen = choose_between_players(game, "Kого ще нашъшкате?")
             if self.sh(chosen, game):
+                visualise(game.screen, game)
                 chosen.cooldown = 1
                 display_message(game.screen, game.font, 500, 50, f"{chosen.get_name()} Бяхте нашъшкани!")
-            display_message(game.screen, game.font, 500, 50, f"{chosen.get_name()} спасихте се!")
+            else:
+                visualise(game.screen, game)
+                display_message(game.screen, game.font, 500, 50, f"{chosen.get_name()} спасихте се!")
             pg.display.flip()
             pg.time.wait(1000)
             self.use_power()

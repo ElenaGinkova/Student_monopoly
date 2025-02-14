@@ -205,8 +205,12 @@ def visualise_selected_characters(game, images, positions, selected):
         if i in selected:
             pg.draw.rect(game.screen, (0, 255, 0), rect, 5) # to show that you have selected
             text_surface = game.font.render(str(selected[i]), True, (255, 255, 255))
+            
+            charact_name = game.characters_dict[i].__name__
+            name_surface = game.font.render(charact_name, True, (255, 255, 0))
+            game.screen.blit(name_surface, (rect.x, rect.y + rect.height + 5))
+            
             game.screen.blit(text_surface, (rect.x + rect.width - 100, rect.y - 25)) # to show the i of the player
-
 
 def draw_background(game):
     game.screen.fill(SCREEN_COLOR)   

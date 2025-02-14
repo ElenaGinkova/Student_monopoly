@@ -179,15 +179,18 @@ class Game:
             i += 1
             
     def select_characters(self, names):
+        panel_rect = pg.Rect(30, 30, 1300, 650)
         images = [pg.image.load(path) for path in self.characters_paths]
         positions = [(i * 180 + 200, 350 - images[i].get_height()) for i in range(5)] # first row
         positions.extend([(i % 5 * 180 + 200, 650 - images[i].get_height()) for i in range(5,9)]) # second row
         selected = OrderedDict() # I need the order of adding 
         button = Button(text = "Играй!", position=(900,600))
+        font = pg.font.Font(None, 40)
         while True:
-            self.screen.fill(SCREEN_COLOR)
-            instructions = self.font.render("Изберете герои: {} оставащи".format(self.pl_count - len(selected)), True, (255, 255, 255))
-            self.screen.blit(instructions, (50, 10))
+            self.screen.blit(BACKGROUND, (0, 0))
+            pg.draw.rect(self.screen, (25, 25, 112), panel_rect, border_radius=15)
+            instructions = font.render("Изберете герои: {} оставащи".format(self.pl_count - len(selected)), True, (255, 255, 255))
+            self.screen.blit(instructions, (70, 40))
             visualise_selected_characters(self, images, positions, selected)
             button.draw(self.screen)
             pg.display.flip()
@@ -247,7 +250,6 @@ class Game:
                     break
 
     def handle_mystery_shot(self):
-        #visualise(self.screen, self)
         buttons = []
         players = self.get_players().copy()
         players.remove(self.get_player())
@@ -366,7 +368,6 @@ class Game:
         self.background = pg.image.load('Monopoly/assets/BoardUNI.png')
         self.background = pg.transform.smoothscale(self.background, (1100, 600) )
         
-        #need quit button then - in menu or sth
         while True:
             for player in self.players:
                 if self.effect:
