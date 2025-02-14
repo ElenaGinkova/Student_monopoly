@@ -193,7 +193,7 @@ class TestHandleMenuPower(unittest.TestCase):
 
 
 
-class TestHandleMenuMortgage(unittest.TestCase):
+class TestBuyProp(unittest.TestCase):
     def setUp(self):
         pg.init()
         self.game = Game()
@@ -207,14 +207,60 @@ class TestHandleMenuMortgage(unittest.TestCase):
         self.game.player = self.player1
         self.game.players = [self.player1, self.player2]
 
-    @patch('Monopoly.Game.decision_menu', side_effect=["Ипотекирай", "testPr", "Край на хода"])
-    def test_handle_menu_mortgage(self, mock_decision_menu):
+   
+    def test_buy_property(self):
         property = Property(0, "testPr", (0,0), 20, 1)
+        old_money = self.player1.get_money()
         self.player1.buy_property(property, self.game.screen, self.game)
+        self.assertEqual(property.owner, self.player1)
+        self.assertEqual(old_money - 20, self.player1.get_money())
+    
+
+class TestMortgage(unittest.TestCase):
+    def setUp(self):
+        pg.init()
+        self.game = Game()
+        self.game.screen = pg.Surface((1500, 700))
+        self.game.font = pg.font.Font(None, 32)
+        self.property = Property(0, "TestProperty", (0, 0), 100, 1)
+        self.game.player = GirlsMagnet("player1")
+        self.game.player.properties.append(self.property)
+        self.game.players = [self.game.player]
+        self.game.background = pg.Surface((1100, 600))
+        self.game.board = Board()
+        self.game.dice = Dice()
+
+    @patch('Monopoly.Players.decision_menu', side_effect=["TestProperty"])
+    def test_mortgage(self, mock_decision_menu):
+        self.game.get_player().handle_mortage(self.game.screen, self.game)
+        self.assertTrue(self.property.is_mortage())
+
+    
+    @patch('Monopoly.Players.decision_menu', side_effect=["TestProperty"])
+    def test_unmortgage(self, mock_decision_menu):
+        self.game.get_player().handle_unmortage(self.game.screen, self.game)
+        self.assertFalse(self.property.is_mortage())
+
+    @patch('Monopoly.Game.decision_menu', side_effect=["Ползвай диплома", "Да", "Добре", "Край на хода"])
+    def test_handle_menu_diploma_with_diploma(self, mock_decision_menu):
+        self.game.get_player().recieve_diploma()
+        self.game.take_turn = MagicMock()
+        result = self.game.handle_menu()
+        self.game.take_turn.assert_called()
+
+    @patch('Monopoly.Game.decision_menu', side_effect=["Ползвай диплома", "Край на хода"])
+    def test_handle_menu_diploma_without_diploma(self, mock_decision_menu):
+        self.game.get_player().diploms = 0
+        self.game.take_turn = MagicMock()
+        result = self.game.handle_menu()
+        self.game.take_turn.assert_not_called()
+    
+    @patch('Monopoly.Game.decision_menu', side_effect=["Купи резерве", "Край на хода"])
+    def test_handle_menu_buy_reserved(self, mock_decision_menu):
+        self.game.player.buy_reserved = MagicMock()
         result = self.game.handle_menu()
         self.assertFalse(result)
-        self.assertTrue(property.is_mortage())
-
+        self.game.player.buy_reserved.assert_called_once_with(self.game)
 
 if __name__ == "__main__":
     unittest.main()
