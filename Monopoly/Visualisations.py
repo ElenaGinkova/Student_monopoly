@@ -212,6 +212,7 @@ def visualise_selected_characters(game, images, positions, selected):
             
             game.screen.blit(text_surface, (rect.x + rect.width - 100, rect.y - 25)) # to show the i of the player
 
+
 def draw_background(game):
     game.screen.fill(SCREEN_COLOR)   
     game.screen.blit(game.background, (0, 100))

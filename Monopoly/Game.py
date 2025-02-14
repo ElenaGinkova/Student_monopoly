@@ -283,8 +283,33 @@ class Game:
             pg.display.update()
             pg.time.wait(1000)
 
+    def handle_info(self):
+        overlay = pg.Surface((self.screen.get_width(), self.screen.get_height()), pg.SRCALPHA)
+        overlay.fill((0, 0, 0, 150))
+        self.screen.blit(overlay, (0, 0))
+        panel_rect = pg.Rect(140, 220, 820, 360)
+        pg.draw.rect(self.screen, (50, 150, 50), panel_rect, border_radius=20) 
+        pg.draw.rect(self.screen, (255, 255, 255), panel_rect, 5, border_radius=20)
+        
+        font = pg.font.Font(None, 30)
+        texts = [
+            "Mystery shot - получава се при хвърляне на чифт от зарове",
+            "Принуждава опонент да пропусне ход",
+            "Диплома - получава се от УНСС",
+            "Ползва се за бонус ход и нищо повече"
+        ]
+        
+        for i, text in enumerate(texts):
+            text_surface = font.render(text, True, (255, 255, 255))
+            text_rect = text_surface.get_rect(center=(panel_rect.centerx, panel_rect.top + 50 + i * 45))
+            self.screen.blit(text_surface, text_rect)
+        
+        pg.display.flip()
+        pg.time.wait(3000)
+
+
     def handle_menu(self):
-        dec = decision_menu(self.screen, "Изберете какво да правите", [["Mystery shot", (200, 300), (150, 50)], ["Ползвай диплома", (400, 300), (150, 50)], ["Отипотекирай", (600, 300), (150, 50)], [f"{self.get_player().get_power_name()}", (200, 400), (200, 50)], ["Ипотекирай", (800, 300), (150, 50)], ["Купи резерве", (450, 400), (150, 50)]], self, [Button(text = "Край на хода", image_path = "Monopoly/assets/quit.png", position = (800, 450), size = (70, 70)), Button(image_path = "Monopoly/assets/info.png", position = (700, 450), size = (70, 70))])
+        dec = decision_menu(self.screen, "Изберете какво да правите", [["Mystery shot", (200, 300), (150, 50)], ["Ползвай диплома", (400, 300), (150, 50)], ["Отипотекирай", (600, 300), (150, 50)], [f"{self.get_player().get_power_name()}", (200, 400), (200, 50)], ["Ипотекирай", (800, 300), (150, 50)], ["Купи резерве", (450, 400), (150, 50)]], self, [Button(text = "Край на хода", image_path = "Monopoly/assets/quit.png", position = (800, 450), size = (70, 70)), Button(text = "Инфо", image_path = "Monopoly/assets/info.png", position = (700, 450), size = (70, 70))])
         if dec == "Mystery shot":
             if self.get_player().has_mystery_shots():
                 self.handle_mystery_shot()
@@ -304,6 +329,8 @@ class Game:
             return False
         elif dec == "Купи резерве":
             self.get_player().buy_reserved(self)
+        elif dec == "Инфо":
+            self.handle_info()
         return self.handle_menu()
 
     def handle_jail(self, player, screen):
