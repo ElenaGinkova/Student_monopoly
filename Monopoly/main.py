@@ -9,5 +9,3 @@ game.play()
 '''Quit Pygame'''
 pygame.quit()
 sys.exit()
-
-#public/pr
