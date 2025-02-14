@@ -1,8 +1,8 @@
 import random
 import pygame as pg
-from Button import Button
-from Visualisations import display_message, ok_button, decision_menu, visualise
-from FieldTypes.Fields import Field
+from ..Button import Button
+from ..Visualisations import display_message, ok_button, decision_menu, visualise
+from ..FieldTypes.Fields import Field
 import sys
 
 

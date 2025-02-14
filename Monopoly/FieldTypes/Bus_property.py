@@ -1,5 +1,5 @@
-from FieldTypes.Property import Property
-from Visualisations import decision_menu, visualise
+from ..FieldTypes.Property import Property
+from ..Visualisations import decision_menu, visualise
 import pygame as pg
 
 

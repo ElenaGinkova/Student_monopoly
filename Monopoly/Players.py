@@ -1,5 +1,5 @@
 import pygame as pg
-from Visualisations import visualise, decision_menu, display_message, GREEN_COLOR
+from .Visualisations import visualise, decision_menu, display_message, GREEN_COLOR
 import sys
 
 

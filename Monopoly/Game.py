@@ -1,19 +1,19 @@
 import pygame as pg
 import sys
-from Characters.GirlsMagnet import GirlsMagnet
-from Characters.BookWorm import BookWorm
-from Characters.Tutor import Tutor
-from Characters.CleaningLady import CleaningLady
-from Characters.Roommate import Roommate
-from Characters.TicketChecker import TicketChecker
-from Characters.NightLife import NightLife
-from Characters.CaffeineAddict import CaffeineAddict
-from Characters.Librarian import Librarian
+from .Characters.GirlsMagnet import GirlsMagnet
+from .Characters.BookWorm import BookWorm
+from .Characters.Tutor import Tutor
+from .Characters.CleaningLady import CleaningLady
+from .Characters.Roommate import Roommate
+from .Characters.TicketChecker import TicketChecker
+from .Characters.NightLife import NightLife
+from .Characters.CaffeineAddict import CaffeineAddict
+from .Characters.Librarian import Librarian
 from collections import OrderedDict
-from Button import Button
-from Visualisations import *
-from Board import Dice, Board
-from Visualisations import visualise_selected_characters
+from .Button import Button
+from .Visualisations import *
+from .Board import Dice, Board
+from .Visualisations import visualise_selected_characters
 import random
 
 

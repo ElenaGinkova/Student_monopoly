@@ -1,7 +1,7 @@
 import sys
 import pygame
-from Players import Player
-from Game import Game
+from .Players import Player
+from .Game import Game
 
 
 game = Game()

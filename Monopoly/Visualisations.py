@@ -1,5 +1,5 @@
 import pygame as pg
-from Button import Button
+from .Button import Button
 import sys
 
 

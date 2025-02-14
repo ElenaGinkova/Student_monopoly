@@ -1,5 +1,5 @@
-from FieldTypes.Fields import Field
-from Visualisations import display_message, visualise
+from ..FieldTypes.Fields import Field
+from ..Visualisations import display_message, visualise
 import pygame as pg
 
 

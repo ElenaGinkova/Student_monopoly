@@ -1,5 +1,5 @@
-from FieldTypes.Fields import Field
-from Visualisations import decision_menu, display_message
+from ..FieldTypes.Fields import Field
+from ..Visualisations import decision_menu, display_message
 import random
 import pygame as pg
 

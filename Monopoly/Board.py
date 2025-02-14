@@ -1,20 +1,20 @@
 import random
 import pygame as pg
-from Button import Button
-from Visualisations import display_message
-from FieldTypes.Property import Property
-from FieldTypes.Chance import Chance
-from FieldTypes.Go_to_jail import GoToJail
-from FieldTypes.Go import Go
-from FieldTypes.Nothing import Nothing
-from FieldTypes.UNSS import UNSS
-from FieldTypes.Canteen import Canteen
-from FieldTypes.December8 import December8
-from FieldTypes.Bus_property import BusProperty
-from FieldTypes.Radio import Radio
-from FieldTypes.Erasm import Erasm
-from FieldTypes.Exe import Exe
-from FieldTypes.Exam import Exam
+from .Button import Button
+from .Visualisations import display_message
+from .FieldTypes.Property import Property
+from .FieldTypes.Chance import Chance
+from .FieldTypes.Go_to_jail import GoToJail
+from .FieldTypes.Go import Go
+from .FieldTypes.Nothing import Nothing
+from .FieldTypes.UNSS import UNSS
+from .FieldTypes.Canteen import Canteen
+from .FieldTypes.December8 import December8
+from .FieldTypes.Bus_property import BusProperty
+from .FieldTypes.Radio import Radio
+from .FieldTypes.Erasm import Erasm
+from .FieldTypes.Exe import Exe
+from .FieldTypes.Exam import Exam
 import sys
 
 
@@ -102,10 +102,10 @@ class Dice:
         self.button = Button(text = "Хвърли заровете", position = button_pos)
 
     def vis_dices(self, screen):
-        dice1_im = pg.image.load(DICE_PATHS[self.dice1 - 1])
-        dice2_im  = pg.image.load(DICE_PATHS[self.dice2 - 1])
-        dice1_im = pg.transform.scale(dice1_im, (70, 70))
-        dice2_im = pg.transform.scale(dice2_im, (70, 70))
+        self.dice1_im = pg.image.load(DICE_PATHS[self.dice1 - 1])
+        self.dice2_im  = pg.image.load(DICE_PATHS[self.dice2 - 1])
+        dice1_im = pg.transform.scale(self.dice1_im, (70, 70))
+        dice2_im = pg.transform.scale(self.dice2_im, (70, 70))
         screen.blit(dice1_im, self.pos1)
         screen.blit(dice2_im, self.pos2)
 
@@ -121,8 +121,10 @@ class Dice:
                     pg.quit()
                     sys.exit()
                 if self.button.is_clicked(event):
-                    self.dice1 = 6#random.randint(1,6)
-                    self.dice2 = 5#random.randint(1,6)
+                    self.dice1 = random.randint(1,6)
+                    self.dice2 = random.randint(1,6)
                     pg.display.update()
                     return self.dice1, self.dice2
-                
+        
+    def get_dice_images(self):
+        return self.dice1_im, self.dice2_im
