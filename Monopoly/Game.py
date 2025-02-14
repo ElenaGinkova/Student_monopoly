@@ -38,12 +38,12 @@ class Game:
     characters_dict = {0 : CleaningLady, 1 : Roommate, 2 : Tutor, 3 : TicketChecker,
                        4 : GirlsMagnet, 5 : BookWorm, 6 : NightLife, 7 : CaffeineAddict, 8 : Librarian}
 
-    def __init__(self):
+    def __init__(self, players = []):
         pg.init()
         self.screen = pg.display.set_mode(SCREEN_DIMENSIONS)
         pg.display.set_caption("Monopoly")
         self.font = pg.font.Font(None, 32)
-        self.players = []
+        self.players = players
         self.buttons = []
         self.player = None
         self.board = Board()
@@ -154,7 +154,6 @@ class Game:
                         input_box[1] = input_box[1][:-1]
                     elif event.unicode.isdigit():  
                         input_box[1] += event.unicode
-
 
     def renumerate(self, selected, missing):
         if missing in selected:

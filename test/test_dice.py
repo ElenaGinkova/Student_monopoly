@@ -3,7 +3,6 @@ import pygame as pg
 pg.font.init()
 from Monopoly.Board import Dice
 from unittest.mock import patch, Mock
-# tests/test_dice.py
 
 import unittest
 from unittest.mock import patch, Mock
@@ -13,9 +12,8 @@ dice_module = importlib.import_module("Monopoly.Board")
 
 Dice = dice_module.Dice
 class TestDice(unittest.TestCase):
-    def test_roll_returns_expected_values_with(self):
+    def test_roll_returns_expected_values(self):
         dummy_screen = pg.Surface((800, 600))
-        
         dummy_event = Mock()
         dummy_event.type = 0
 
@@ -31,7 +29,7 @@ class TestDice(unittest.TestCase):
             dice.button.is_clicked = lambda event: True
 
             result = dice.roll(dummy_screen)
-            self.assertEqual(result, (6, 5))
+            self.assertEqual(result, (6, 5), "Rolling wrong")
 
 if __name__ == "__main__":
     unittest.main()

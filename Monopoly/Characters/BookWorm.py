@@ -1,6 +1,6 @@
-from Players import Player
-from Visualisations import decision_menu, create_buttons, display_message, visualise, choose_between_players
-from Board import Dice
+from ..Players import Player
+from ..Visualisations import decision_menu, create_buttons, display_message, visualise, choose_between_players
+from ..Board import Dice
 import pygame as pg
 
 

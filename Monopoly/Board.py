@@ -57,7 +57,6 @@ class Board:
     def get_pos_from_indx(self, indx):
         return self.fields[indx].position
     
-    #Animation for movement
     def move(self, player, steps, screen, game):
         old_pos_indx = player.get_pos_indx()
         new_pos_indx = old_pos_indx

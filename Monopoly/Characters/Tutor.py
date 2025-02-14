@@ -1,5 +1,5 @@
-from Players import Player
-from Visualisations import decision_menu, display_message
+from ..Players import Player
+from ..Visualisations import decision_menu, display_message
 import pygame as pg
 
 

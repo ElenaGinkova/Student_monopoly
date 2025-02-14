@@ -1,8 +1,8 @@
-from Players import Player
-from Visualisations import decision_menu, display_message, choose_between_players, visualise
+from ..Players import Player
+from ..Visualisations import decision_menu, display_message, choose_between_players, visualise
 import pygame as pg
-from Board import Dice
-from Characters.BookWorm import take_turn
+from ..Board import Dice
+from ..Characters.BookWorm import take_turn
 
 
 GREEN_COLOR = (100, 140, 100)
