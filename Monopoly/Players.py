@@ -36,7 +36,7 @@ class Player():
         self.diploms = 0
         self.cooldown = 0
         self.reverse_moving = False
-        self.mystery_shots = 0
+        self.mystery_shots = 1
         self.used_power = False
         self.reserved_field = None# when we pass go we restart to none
 

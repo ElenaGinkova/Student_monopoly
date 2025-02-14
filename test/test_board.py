@@ -8,8 +8,9 @@ from Monopoly.Players import Player
 from Monopoly.Game import Game
 from Monopoly.Board import Dice
 import os
-os.environ["SDL_VIDEODRIVER"] = "dummy"
 
+
+os.environ["SDL_VIDEODRIVER"] = "dummy"
 pg.font.init()
 
 
@@ -28,7 +29,6 @@ class TestBoardWithRealPlayerAndGame(unittest.TestCase):
         pos_index = self.game.player.get_pos_indx()
         steps = 4
         expected_index = (pos_index + steps) % FIELD_COUNT
-        
         self.board.move(self.game.player, steps, self.screen, self.game)
         
         self.assertEqual(self.game.player.get_pos_indx(), expected_index)
@@ -69,9 +69,10 @@ class TestBoardWithRealPlayerAndGame(unittest.TestCase):
 
         field = self.board.get_next_bus_field(32)
         self.assertIs(field, self.board.fields[0])
-        
+
         field = self.board.get_next_bus_field(33)
         self.assertIs(field, self.board.fields[0])
+
 
 if __name__ == "__main__":
     unittest.main()

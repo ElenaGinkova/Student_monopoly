@@ -31,5 +31,6 @@ class TestDice(unittest.TestCase):
             result = dice.roll(dummy_screen)
             self.assertEqual(result, (6, 5), "Rolling wrong")
 
+
 if __name__ == "__main__":
     unittest.main()
