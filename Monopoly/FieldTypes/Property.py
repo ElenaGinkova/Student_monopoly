@@ -65,7 +65,7 @@ class Property(Field):
         return int(self.price * 0.55)
     
     def unmortage(self):
-        self.mortage = False
+        self.mortaged = False
 
     def rent(self, screen, game):
         if self.mortaged:

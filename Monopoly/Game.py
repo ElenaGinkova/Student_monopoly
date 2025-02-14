@@ -29,10 +29,6 @@ BACKGROUND = pg.image.load("Monopoly/assets/background.png")
 BACKGROUND = pg.transform.scale(BACKGROUND, SCREEN_DIMENSIONS)
 
 
-#do not put everything in self and in the class...
-#maybe gameprep class and other for gameplay
-#maybe shouldnt be stored in self but get the info and forget abt it
-#maybe in class player or idk
 class Game:
     characters_paths = [f"Monopoly/assets/character{i}.png" for i in range(9)]#
     characters_dict = {0 : CleaningLady, 1 : Roommate, 2 : Tutor, 3 : TicketChecker,
@@ -297,6 +293,10 @@ class Game:
             "Принуждава опонент да пропусне ход",
             "Диплома - получава се от УНСС",
             "Ползва се за бонус ход и нищо повече"
+            "Можете да получите живот от:",
+            "стола или от изпит",
+            "Резерве-опция, която се прилага на най-много едно поле",
+            "Полето е резервирано, докато не бъде преминато през него пак"
         ]
         
         for i, text in enumerate(texts):
@@ -306,7 +306,6 @@ class Game:
         
         pg.display.flip()
         pg.time.wait(3000)
-
 
     def handle_menu(self):
         dec = decision_menu(self.screen, "Изберете какво да правите", [["Mystery shot", (200, 300), (150, 50)], ["Ползвай диплома", (400, 300), (150, 50)], ["Отипотекирай", (600, 300), (150, 50)], [f"{self.get_player().get_power_name()}", (200, 400), (200, 50)], ["Ипотекирай", (800, 300), (150, 50)], ["Купи резерве", (450, 400), (150, 50)]], self, [Button(text = "Край на хода", image_path = "Monopoly/assets/quit.png", position = (800, 450), size = (70, 70)), Button(text = "Инфо", image_path = "Monopoly/assets/info.png", position = (700, 450), size = (70, 70))])
@@ -357,7 +356,7 @@ class Game:
                 display_message(self.screen, self.font, 500, 40, "Неуспешно")
                 pg.display.flip()
                 pg.time.wait(1000)
-                return self.handle_jail(player, screen)
+                return False
         elif dec == "Карта":
             if player.has_out_of_jail_card():
                 dec = decision_menu(self.screen, "Имате карта за освобождаване. Искате лида я ползвате?", [["Да", (300, 370), (150, 50)], ["Не", (500, 370), (150, 50)]], self)
@@ -419,6 +418,7 @@ def get_textbox_info(input_boxes, event, indx):
         input_boxes[indx][1] = input_boxes[indx][1][:-1]
     elif len(input_boxes[indx][1]) <= 10:
         input_boxes[indx][1] += event.unicode
+
 
 def active_box_i(event, input_boxes):
     for i, (box, _, _) in enumerate(input_boxes):

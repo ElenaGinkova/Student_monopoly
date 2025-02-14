@@ -8,6 +8,7 @@ from Monopoly.Board import Dice, Board
 from Monopoly.Characters.GirlsMagnet import GirlsMagnet
 import pygame as pg
 from Monopoly.Game import Game, get_textbox_info, active_box_i
+from Monopoly.FieldTypes.Property import Property
 from Monopoly.Players import Player
 
 
@@ -81,6 +82,7 @@ class TestPreGameMethods(unittest.TestCase):
         index = active_box_i(event, input_boxes)
         self.assertEqual(index, -1)
 
+
 class TestGameTurn(unittest.TestCase):
     def setUp(self):
         self.game = Game()
@@ -103,6 +105,7 @@ class TestGameTurn(unittest.TestCase):
               
                 mock_handle_menu.assert_called()
                 player.reset_power.assert_called()
+
 
 class TestHandleMenuMysteryShot(unittest.TestCase):
 
@@ -131,6 +134,7 @@ class TestHandleMenuMysteryShot(unittest.TestCase):
         self.assertEqual(prev_life - 10, self.game.players[1].get_life())
         self.assertEqual(self.game.players[0].mystery_shots, prev_mist_shots - 1)
         self.assertEqual(mock_decision_menu.call_count, 4)
+
 
 class TestGameWin(unittest.TestCase):
     def setUp(self):
@@ -189,6 +193,27 @@ class TestHandleMenuPower(unittest.TestCase):
 
 
 
+class TestHandleMenuMortgage(unittest.TestCase):
+    def setUp(self):
+        pg.init()
+        self.game = Game()
+        self.game.screen = pg.Surface((1500, 700))
+        self.game.font = pg.font.Font(None, 32)
+        self.game.board = Board()
+        self.game.dice = Dice()
+        self.game.background = pg.Surface((1100, 600))
+        self.player1 = GirlsMagnet("player1")
+        self.player2 = GirlsMagnet("player2")
+        self.game.player = self.player1
+        self.game.players = [self.player1, self.player2]
+
+    @patch('Monopoly.Game.decision_menu', side_effect=["Ипотекирай", "testPr", "Край на хода"])
+    def test_handle_menu_mortgage(self, mock_decision_menu):
+        property = Property(0, "testPr", (0,0), 20, 1)
+        self.player1.buy_property(property, self.game.screen, self.game)
+        result = self.game.handle_menu()
+        self.assertFalse(result)
+        self.assertTrue(property.is_mortage())
 
 
 if __name__ == "__main__":
