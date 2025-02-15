@@ -25,24 +25,24 @@ QUESTIONS = [
 ]
 
 ANSWERS = [
-    "Да",  # You can survive without coffee
-    "Не",  # 561 is not a prime number
-    "Да",  # Two coprime numbers have GCD = 1
-    "Да",  # Sum of the angles in a quadrilateral is 360 degrees
-    "Да",  # Differentiability implies continuity
-    "Да",  # 5! = 120 different book arrangements
-    "Не",  # The most likely outcome is 5/5, but not guaranteed
-    "Не",  # append(x) adds to the end, not the beginning
-    "Не",  # None and False are not the same
-    "Не",  # is compares references, == compares values
-    "Не",  # Dijkstra's algorithm does not work with negative weights
-    "Да",  # All classes inherit from object
-    "Да",  # __add__() allows operator overloading
-    "Не",  # Tuples in Python are immutable
-    "Да",  # Python supports multiple inheritance
-    "Да",  # You can return multiple values using a tuple
-    "Да",  # Python has a built-in garbage collector
-    "Не"   # Assignment creates a reference, not a copy
+    "Да",   
+    "Не",  
+    "Да",  
+    "Да",  
+    "Да",  
+    "Да",  
+    "Не",  
+    "Не",  
+    "Не",  
+    "Не",  
+    "Не",  
+    "Да",  
+    "Да",  
+    "Не",  
+    "Да",  
+    "Да",  
+    "Да",  
+    "Не"   
 ]
 
 EXPLANATIONS = [

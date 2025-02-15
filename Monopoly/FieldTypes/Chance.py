@@ -7,8 +7,6 @@ import pygame as pg
 CARD_COUNT = 18
 
 
-# to do to make them good visualisation card like
-# add more cards
 class Card:
     def __init__(self, text):
         self.text = text
@@ -114,7 +112,6 @@ class CardPayAllPlayers(Card):
                 break
 
 
-#Пробвай се - преработи, добави
 class Chance(Field):
     CARDS = [
              CardWinMoney("Банката ви връща надвзети данъци. Вземете 200лв.!", 200),
@@ -141,8 +138,6 @@ class Chance(Field):
              CardGetOutOfJailFree("Излезте от ЗАТВОРА безплатно! (Задръжте тази карта)"),
              CardNearestBus("Отидете до най-близката спирка."),
              ]
-    #CardMoveForward("Напреднете до следващата жп станция. Ако е свободна, може да я купите. Ако не - плащате наема!", "next_station"),
-    #CardMoveBack("Взехте грешен самолетен билет! Преместете се 3 полета назад!", 3)
 
     def __init__(self, indx, name, position):
         super().__init__(indx, name, position)
@@ -151,14 +146,3 @@ class Chance(Field):
         card_num = random.randint(0, CARD_COUNT - 1)
         card = self.CARDS[card_num]
         card.action(game)
-
-
-#to do
-# class CardMoveBack(Card):
-#     def __init__(self, text, spaces):
-#         super().__init__(text)
-#         self.spaces = spaces
-
-#     def action(self, game):
-#         decision_menu(game.screen, self.text, [["Ok", (300, 370), (150, 50)]], game)
-#         game.get_player().move_back(game, self.spaces)

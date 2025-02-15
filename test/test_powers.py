@@ -9,6 +9,7 @@ from Monopoly.Characters.Librarian import Librarian
 from Monopoly.Characters.Roommate import Roommate
 from Monopoly.Characters.CleaningLady import CleaningLady
 
+
 class TestTutorPower(unittest.TestCase):
     def setUp(self):
         pg.init()
