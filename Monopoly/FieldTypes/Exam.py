@@ -3,6 +3,7 @@ from ..Visualisations import decision_menu
 import pygame as pg
 import random
 
+
 QUESTIONS = [
     "Ако не пиеш кафе можеш да оцелееш?",
     "Числото 561 е просто число?",
@@ -24,6 +25,7 @@ QUESTIONS = [
     "Python винаги копира списъци при присвояване (list2 = list1)?"
 ]
 
+
 ANSWERS = [
     "Да",   
     "Не",  
@@ -44,6 +46,7 @@ ANSWERS = [
     "Да",  
     "Не"   
 ]
+
 
 EXPLANATIONS = [
     "Просто е по-трудно!",
