@@ -11,22 +11,20 @@ Unlike traditional Monopoly, this project introduces new mechanics such as traps
 ## Features
 
 - Multiplayer gameplay for **2 to 3 players**
-- **11x11 board** with randomly assigned field types
+- **11x11 board**
 - Student-life-inspired gameplay and locations
 - Unique playable characters with **special abilities**
 - Traditional and custom field types
 - Randomized dice mechanics with additional rules
-- Support for **custom field creation**
 - Budget and health management
 - Coursework project evaluation and game progression logic
-- Multiplayer support using **socket** and **threading**
 - Visual representation built with **Pygame**
 
 ## Gameplay
 
-The game board is generated on an **11x11 grid**, where tiles receive their type randomly from a database, with the condition that exactly one tile is the starting position.
-
 Players move across the board and interact with different types of fields. Some fields follow mechanics similar to classic Monopoly, while others introduce completely new effects based on student life.
+
+At the beginning of each turn, the player may choose to activate special gameplay options before rolling the dice, such as using a character ability, applying a Mystery Shot, or spending a diploma bonus. Each of these actions can be used according to the game’s turn limitations.
 
 ### Field Types
 
@@ -53,7 +51,6 @@ Each player has the following attributes:
 - **Budget**
 - **Health**
 - **Special ability**
-- **Drunkenness level**
 - **Diplomas**
 - **Mystery Shots**
 
