@@ -107,7 +107,8 @@ To start the game, run:
 ```bash
 python -m Monopoly.main
 ```
-```bash
+
 To start the tests, run:
+```bash
 python -m unittest discover test
 ```
