@@ -1,9 +1,0 @@
-
-старт -> python -m Monopoly.main
-
-тестове ->  python -m unittest discover test
-
-commit-> 
-git add .
-git commit -m "Updated project"
-git push origin main
