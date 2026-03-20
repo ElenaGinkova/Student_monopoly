@@ -56,21 +56,20 @@ Each player has the following attributes:
 
 ### Available Characters
 
-- **BookWorm** – challenges another player to a dice duel
-- **GirlsMagnet** – distracts opponents and causes them to lose a turn
+- **BookWorm** – challenges another player to a dice duel. The other player choses amount of money to gamble.
+- **CaffeineAddict** – can gain extra energy by drinking coffee - rolls an additional die
+- **CleaningLady** - can move a player one field forward or backwards
+- **GirlsMagnet** – distracts opponents and causes them to lose a turn. Can use this power once in 3 turns
+- **Librarian** – can silence someone, who needs to roll dice. for result 1–6 they loose on eturn because of the strict order. otherwise they continue
 - **NightLife** – receives more Mystery Shots
-- **94TicketChecker** – can fine another player
+- **Roommate** – manipulates a player, decides that they want to "reorder the furniture" and they switch places with the player
+- **TicketChecker** – can charge another player 50lv 
 - **Tutor** – decreases the mood of all student players by introducing an extra test
-- **Roommate** – swaps another player's position
-- **CaffeineAddict** – can gain extra energy and roll an additional die
-- **LibraryLibrarian** – can attempt to block an opponent from taking their next turn
-
+  
 ## Dice Mechanics
 
 The game uses randomized dice with an additional special rule:
 
-- Dice include a **seventh side**, called **"no coffee"**, with value `0`
-- If a player rolls a pair of zeros, their turn ends immediately
 - If a player rolls any other pair, they receive a **Mystery Shot**
 
 ## Additional Rules
@@ -89,8 +88,6 @@ The game uses randomized dice with an additional special rule:
 
 - **Python**
 - **Pygame**
-- **socket**
-- **threading**
 - Built-in Python modules
 
 ## Project Goals
@@ -100,25 +97,10 @@ This project focuses on:
 - object-oriented design
 - game loop implementation
 - player interaction
-- multiplayer communication
 - random event handling
 - creating a more dynamic and humorous alternative to classic Monopoly
 
-## Future Improvements
-
-Planned or optional features include:
-
-- Support for more players
-- Bot opponents with different strategies
-- Turn timer with penalties for delayed moves
-- Further board customization
-- Improved UI and visual effects
-
 ## How to Run
-
-> Add your actual run instructions here depending on your project structure.
-
-Example:
 
 ```bash
 git clone https://github.com/your-username/student-monopoly.git
