@@ -102,7 +102,12 @@ This project focuses on:
 
 ## How to Run
 
+To start the game, run:
+
 ```bash
-git clone https://github.com/your-username/student-monopoly.git
-cd student-monopoly
-python main.py
+python -m Monopoly.main
+```
+```bash
+To start the tests, run:
+python -m unittest discover test
+```
