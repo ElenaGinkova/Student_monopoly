@@ -1,185 +1,115 @@
-# Student_monopoly
+# Student Monopoly
 
-## Title/Звание
+## Overview
 
-Student Monopoly/Студентски Монопол
+**Student Monopoly** is a Python-based multiplayer board game inspired by the classic Monopoly formula and reimagined around student life. The game is designed for **two to three players** and combines traditional board game mechanics with original rules, character abilities, random events, and student-themed locations.
 
+Each player starts with the same amount of money but has a **unique special ability** that can influence the game in different ways. The main objective is to become the wealthiest player by the end of the game while managing budget, health, diplomas, and other gameplay effects.
 
-## Description/Обрисовка
+Unlike traditional Monopoly, this project introduces new mechanics such as traps, negative and positive random events, player attacks, temporary rule changes, reverse movement, custom fields, and more dynamic interactions between players.
 
-Писна ли ви всеки път със семейството да играете една и съща прашасала и остаряла игра(единствената, която имате в шкафа),
+## Features
 
-а имменно класическото "Монополи"? "Отвъд Монополи" е решението на вашия екзистенциален проблем! Играта е насочена към това да разбие
+- Multiplayer gameplay for **2 to 3 players**
+- **11x11 board**
+- Student-life-inspired gameplay and locations
+- Unique playable characters with **special abilities**
+- Traditional and custom field types
+- Randomized dice mechanics with additional rules
+- Budget and health management
+- Coursework project evaluation and game progression logic
+- Visual representation built with **Pygame**
 
-скуката и обикновеното. Тя представлява multiplayer платформа на тематика "Студентски живот", в която могат да участват от двама до 
+## Gameplay
 
-трима играчи(идеята за развитие е за повече играчи-повече връзки за поддържане). Всички участници стартират с различни специални
+Players move across the board and interact with different types of fields. Some fields follow mechanics similar to classic Monopoly, while others introduce completely new effects based on student life.
 
-способностти, но еднаква сума пари. След което основната им цел е да станат най-богати накрая. Разликите от традиционната игра са,
+At the beginning of each turn, the player may choose to activate special gameplay options before rolling the dice, such as using a character ability, applying a Mystery Shot, or spending a diploma bonus. Each of these actions can be used according to the game’s turn limitations.
 
-че има възможност за ползване на някои хитринки, атакуване на другарче, допълнителни правила, персонализация на полета. 
+### Field Types
 
+#### Classic-inspired fields
+- **Pocket Money from Home** – starting tile that provides bonus money
+- **Properties** – purchasable locations such as student-themed buildings and places
+- **Try Your Luck** – draw a random chance card
+- **Yellow Book** – equivalent of jail
+- **Dormitory / Apartment** – equivalent of houses/hotels
 
-## Functionalities/Надарености
+#### Custom fields
+- **8th of December** – a trap that removes a significant amount of money and applies a two-turn cooldown
+- **Exam** – asks a question that can lead to a positive or negative outcome
+- **UNWE** – grants +1 diploma
+- **Student Canteen** – may increase or decrease health depending on luck
+- **Exe** – reverses player movement until they return to the starting tile
+- **Erasmus** – teleports the player to a random tile and grants a budget bonus
+- **Student Radio** – spreads a rumor that changes the rules of the game for all players for three turns
 
-0. Картата е с размери 11x11. Полетата приемат своят конкретен тип на случаен принцип от базата данни, като единственото условие е 
+## Player Attributes
 
-да има 1 начало.
+Each player has the following attributes:
 
+- **Budget**
+- **Health**
+- **Special ability**
+- **Diplomas**
+- **Mystery Shots**
 
-1. Видове полета, които ще бъдат част:
+### Available Characters
 
-#Аналог на традиционните
+- **BookWorm** – challenges another player to a dice duel. The other player choses amount of money to gamble.
+- **CaffeineAddict** – can gain extra energy by drinking coffee - rolls an additional die
+- **CleaningLady** - can move a player one field forward or backwards
+- **GirlsMagnet** – distracts opponents and causes them to lose a turn. Can use this power once in 3 turns
+- **Librarian** – can silence someone, who needs to roll dice. for result 1–6 they loose on eturn because of the strict order. otherwise they continue
+- **NightLife** – receives more Mystery Shots
+- **Roommate** – manipulates a player, decides that they want to "reorder the furniture" and they switch places with the player
+- **TicketChecker** – can charge another player 50lv 
+- **Tutor** – decreases the mood of all student players by introducing an extra test
+  
+## Dice Mechanics
 
-- "Джобни от дома" - предоставя бонус средства; аналог на началната позиция
+The game uses randomized dice with an additional special rule:
 
-- "Имоти" - "Автобусна спирка"(аналог на гара), "Фитнес33"(обикновен имот), "Лападунди"(обикновен имот) и т.н.
+- If a player rolls any other pair, they receive a **Mystery Shot**
 
-- "Пробвай се" - тегли се карта на късмета
+## Additional Rules
 
-- "Жълта книжка" - аналог на "Затвор" в традиционната игра
+- A player may use at most:
+  - **one Mystery Shot**
+  - **one diploma**
+  - **one special ability**
+  during a single turn
+- A field can be marked as **Reserved**, making its effect inactive for other players until it is passed again
+- A player loses the game if they:
+  - run out of health
+  - go bankrupt
 
-- "Общежитие/Квартира" - не е поле, но е аналог на къща/хотел
+## Technologies Used
 
+- **Python**
+- **Pygame**
+- Built-in Python modules
 
-#Нови
+## Project Goals
 
-- "8 декември" - поле капан, която отнема значителна част от бюджета и прилага cool-down на играча за два хода
+This project focuses on:
 
-- "Изпит" - Задава въпрос, от който зависи дали изходът от хода ще е положителен/отрицателен
+- object-oriented design
+- game loop implementation
+- player interaction
+- random event handling
+- creating a more dynamic and humorous alternative to classic Monopoly
 
-- "УНСС" - +1 диплома
+## How to Run
 
-- "Студентски стол" - ако имаш късмет ще се нахраниш добре и ще се увеличи живота ти, ако ли не - си се натровил и ще се намали живота ти
+To start the game, run:
 
-- "Exe" - замайва играчът, т.е. го кара играчът да изпълнява ходовете си наобратно докато не се върне до началото
+```bash
+python -m Monopoly.main
+```
 
-- "Еразъм" - Телепортира играча на случайно място по игралното поле, като същевременно добавя бонус към бюджета му
+To start the tests, run:
 
-- "Студентско радио" - Позволява ти да "разпространиш слух", който променя правилата на играта за всички за три хода
-
-(например: всички полета дават двойни награди)
-
-
-2. Всеки играч притежава следните атрибути:
-
-#Традиционни
-
--бюджет
-
--ниво на недепресираност - живот
-
-
-#Нови
-
--специални способностти
-
--ниво на пиянство - брой ходове, които да пропусне
-
--дипломи - могат да бъдат използвани само за бонус ход еднократно
-
--"Mystery Shots"(могат да бъдат приложени на всеки от участниците и на случаен принцип, или да повлияят на нивото на пиянство или
-
-на нивото на недепресираност)
-
-
-Предоставените герои се различават по своите специалнни способности:
-
--"BookWorm" - може да предизвика опонент на борба със зарове(знания), като предизвиканият определя залога
-
--"GirlsMagnet" - Може да разсейва играчите и те губят ход
-
--"NightLife" - получава повече Mystery Shots
-
--"94TicketChecker" - има право да глоби играч
-
--"Tutor" - (често е студент също) депресира всички други играчи студенти, като добави ново контролно
-
--"Roommate" -  манипулира даден играч, решава, че ще "размества мебелите" и кара даден играч да сменят позиции
-
--"CaffeineAddict" - може да се „зареди“ с допълнителна енергия – да хвърли допълнителен зар
-
--"LibraryLibrarian" - може да задейства „Мълчание, моля!“, като избере противник, който трябва да хвърли зар. При нисък резултат (напр. 1–3) противникът губи следващия си ход (като „блокиран“ от строгия ред).
-
-3. Заровете се генерират на случаен принцип. Те притежават и седма страна("no cofee"), която има стойност 0. При всяко хвърляне на чифт
-
-от нея, ходът приключва моментално. При хвърлянето на чифт с друга стойност, играчът получава "Mystery Shot".
-
-
-4. "Резерве" - опция, която се прилага на най-много едно поле едновременно. Полето е резервирано, докато не бъде преминато 
-
-през него отново. Неговото действие става неактивно за другите играчи
-
-
-5. В рамките на свой ход играчът може да приложи не повече от един Mystery shot, една диплома, използва веднъж специална способност. 
-
-Ходът приключва с изиграване на стъпките от зара
-
-
-5. Участник може да загуби, ако му свърши живота или банкрутира.
-
-
-6. Създаване на персонализирани полета - всяко поле има вид от основните(имот, затвор, начало, карта шанс, гара), описание. След 
-
-запазването му, то се добавя към базата данни.
-
-
-### Бонус, ако се видя във време
-
-
-7. Игра срещу бот - предлага се възможност на играча да избере противников бот, използващ различни стратегии.
-
-
-8. Таймер - допълнителна опция, която се селектира в началото. Губят се пари при надвишаване на ограничението за даден ход. 
-
-
-## Milestones/Възлови точки
-
--Създаване на йерархията и геймлууп
-
--Добро структуриране на възможностти за ход
-
--Създаване на герои със способности, базата данни от полета
-
--Добавяне на визуална репрезентация
-
--Реализацията на заровете, имайки предвид допълнителните правила
-
--Реализиране на функционалността "Резерве"
-
--Реализиране на възможност за повече играчи
-
-(Подредени са по значимост и нужда от реализация, като последните ще бъдат реализирани само ако имам време)
-
-
-### Estimate in man-hours/Времеоценка в човекочасове
-
-- Разучаване на Pygame - 6 човекочасове.
-
-- Изготвяне на йерархии, карта, полета - 20 чч.
-
-- Изготвяне на различните герои - 30 чч.
-
-- Имплементиране на визуална репрезентация - 6 чч.
-
-- Изготвяне на основната логика по играта - 30 чч.
-
-- Осъществяване на връзката между играчи - 15 чч.
-
-- Реализиране на създаване на персонализирани полета - 10 чч.
-
-- Тестове - 15 чч.
-
-Общо - 134 човекочасове.
-
-
-## Usage of technologies/Потребление на технологии
-
-- Pygame
-
-- Вградени модули
-
-- Socket, threading
-
-
-------------------------------------------------------------------------------------------------------------------------
+```bash
+python -m unittest discover test
+```
